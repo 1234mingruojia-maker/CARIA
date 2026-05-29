@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CARIA
 
-## Getting Started
+**ระบบแนะนำอาชีพส่วนบุคคลด้วยการวัดความคล้ายคลึงของสมรรถนะ**  
+**A Personalized Career Recommender Based on Individual Competency Similarity Measure**
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-15.0-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+
+## 📋 เกี่ยวกับโปรเจกต์
+
+CARIA เป็นระบบแนะนำอาชีพที่พัฒนาขึ้นเพื่อช่วยนักเรียน นักศึกษา ในการเลือกเส้นทางอาชีพที่เหมาะสมกับ**สมรรถนะ (Competency)** ของตนเอง โดยเฉพาะอาชีพด้าน **Digital Technology** และ **Digital Media**
+
+ระบบใช้เทคนิค **Modified Euclidean Similarity (MES)** ในการคำนวณความคล้ายคลึงระหว่างสมรรถนะของผู้ใช้กับสมรรถนะที่ต้องการในแต่ละอาชีพ และยังสามารถวิเคราะห์**ช่องว่างของสมรรถนะ (Competency Gap Analysis)** ได้ด้วย
+
+---
+
+## 🛠 เทคโนโลยีที่ใช้
+
+| เทคโนโลยี              | วัตถุประสงค์                  |
+|------------------------|-------------------------------|
+| Next.js 15 (App Router)| Framework หลัก                |
+| TypeScript             | ภาษาหลัก                     |
+| Tailwind CSS           | การออกแบบ UI                  |
+| Supabase (Planned)     | Database & Authentication     |
+| MES Algorithm          | การคำนวณความคล้ายคลึง        |
+
+---
+
+## 🚀 วิธีติดตั้งและรันโปรเจกต์
+
+### Prerequisites
+- Node.js 20+
+- Git
+
+### ขั้นตอนการติดตั้ง
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# 1. Clone โปรเจกต์
+git clone https://github.com/1234mingruojia-maker/CARIA.git
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 2. เข้าโฟลเดอร์
+cd CARIA
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# 3. ติดตั้ง dependencies
+npm install
+รันโปรเจกต์
+Bashnpm run dev
+เปิดเบราว์เซอร์ที่ http://localhost:3000
+Build Production
+Bashnpm run build
+npm start
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+📌 คุณสมบัติหลัก
+แบบสอบถามประเมินสมรรถนะ (Skill, Knowledge, Attitude)
+แนะนำ 10 อันดับอาชีพที่เหมาะสมที่สุด
+วิเคราะห์ Competency Gap Analysis
+ใช้ Modified Euclidean Similarity (MES)
+รองรับอาชีพ Digital Technology และ Digital Media
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+อ้างอิง:
+Seesukong, S., Angskun, T., et al. (2024). CARIA: A Personalized Career Recommender Based on Individual Competency Similarity Measure. International Journal of Information and Communication Technology Education.
