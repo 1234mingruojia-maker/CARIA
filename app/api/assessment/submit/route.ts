@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { recommendCareers } from '@/lib/scoring'
-import { mapAnswersToOnet, mapAnswersToDb } from '@/lib/questionMap'
+import { mapAnswersToDb } from '@/lib/questionMap'
 import { supabase } from '@/lib/supabase'
 
 export async function POST(req: NextRequest) {
@@ -14,16 +14,12 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // แปลงคำตอบเป็น onetKey format สำหรับคำนวณ
-    const mappedAnswers = mapAnswersToOnet(answers)
+    // ส่ง rawAnswers ตรงๆ เข้า recommendCareers
+    const result = await recommendCareers({}, answers, sector)
 
-    // คำนวณ MES
-    const result = await recommendCareers(mappedAnswers, sector)
-
-    // แปลงเป็น db column format สำหรับบันทึก
+    // แปลงสำหรับบันทึก DB
     const dbAnswers = mapAnswersToDb(answers)
 
-    // บันทึกลง Supabase
     let savedId = null
     try {
       const { data, error } = await supabase

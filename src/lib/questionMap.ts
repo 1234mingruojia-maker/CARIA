@@ -7,105 +7,122 @@ export type Question = {
 }
 
 export const QUESTIONS: Question[] = [
-  // ── SKILL ──────────────────────────────────────────────────
-  { id:'S01', dbColumn:'s01_active_learning',       onetKey:'Active Learning',                    type:'skill',     text:'ฉันสามารถเรียนรู้เรื่องใหม่ได้ด้วยตัวเองโดยไม่ต้องมีคนสอน' },
-  { id:'S02', dbColumn:'s02_active_listening',      onetKey:'Active Listening',                   type:'skill',     text:'ฉันสามารถทำงานร่วมกับผู้อื่นในทีมได้อย่างราบรื่น และให้คำแนะนำผู้อื่นได้เหมาะสม' },
-  { id:'S03', dbColumn:'s03_critical_thinking',     onetKey:'Critical Thinking',                  type:'skill',     text:'ฉันสามารถวิเคราะห์ปัญหาและหาสาเหตุที่แท้จริงได้ก่อนตัดสินใจแก้ไข' },
-  { id:'S04', dbColumn:'s04_coordination',          onetKey:'Coordination',                       type:'skill',     text:'ฉันสามารถประสานงานกับหลายฝ่ายพร้อมกันได้โดยไม่เกิดความสับสน' },
-  { id:'S05', dbColumn:'s05_equipment_maintenance', onetKey:'Equipment Maintenance',              type:'skill',     text:'ฉันสามารถดูแลและบำรุงรักษาอุปกรณ์หรือเครื่องมือที่ใช้งานได้' },
-  { id:'S06', dbColumn:'s06_equipment_selection',   onetKey:'Equipment Selection',                type:'skill',     text:'ฉันสามารถเลือกอุปกรณ์หรือเครื่องมือที่เหมาะสมกับงานแต่ละประเภทได้' },
-  { id:'S07', dbColumn:'s07_installation',          onetKey:'Installation',                       type:'skill',     text:'ฉันสามารถติดตั้งซอฟต์แวร์ ระบบ หรืออุปกรณ์ได้ด้วยตัวเอง' },
-  { id:'S08', dbColumn:'s08_instructing',           onetKey:'Instructing',                        type:'skill',     text:'ฉันสามารถอธิบายหรือสอนสิ่งที่ฉันรู้ให้คนอื่นเข้าใจได้' },
-  { id:'S09', dbColumn:'s09_judgment_decision',     onetKey:'Judgment and Decision Making',       type:'skill',     text:'ฉันสามารถตัดสินใจในสถานการณ์ที่มีข้อมูลไม่ครบหรือมีความกดดันได้' },
-  { id:'S10', dbColumn:'s10_mgmt_material',         onetKey:'Management of Material Resources',  type:'skill',     text:'ฉันสามารถบริหารจัดการวัสดุหรือทรัพยากรที่มีอยู่ให้เกิดประโยชน์สูงสุด' },
-  { id:'S11', dbColumn:'s11_mgmt_personnel',        onetKey:'Management of Personnel Resources', type:'skill',     text:'ฉันสามารถมอบหมายงานและดูแลสมาชิกในทีมได้อย่างมีประสิทธิภาพ' },
-  { id:'S12', dbColumn:'s12_monitoring',            onetKey:'Monitoring',                         type:'skill',     text:'ฉันสามารถติดตามและตรวจสอบความคืบหน้าของงานหรือระบบได้อย่างสม่ำเสมอ' },
-  { id:'S13', dbColumn:'s13_negotiation',           onetKey:'Negotiation',                        type:'skill',     text:'ฉันสามารถเจรจาต่อรองเพื่อหาข้อตกลงที่ทุกฝ่ายยอมรับได้' },
-  { id:'S14', dbColumn:'s14_operations_control',    onetKey:'Operation and Control',              type:'skill',     text:'ฉันสามารถควบคุมการทำงานของระบบหรือกระบวนการให้เป็นไปตามแผน' },
-  { id:'S15', dbColumn:'s15_operations_monitoring', onetKey:'Operations Monitoring',              type:'skill',     text:'ฉันสามารถสังเกตเห็นความผิดปกติในระบบหรือกระบวนการได้ก่อนที่จะเกิดปัญหา' },
-  { id:'S16', dbColumn:'s16_operations_analysis',   onetKey:'Operations Analysis',                type:'skill',     text:'ฉันสามารถวิเคราะห์กระบวนการทำงานและหาจุดที่ควรปรับปรุงได้' },
-  { id:'S17', dbColumn:'s17_quality_control',       onetKey:'Quality Control Analysis',           type:'skill',     text:'ฉันสามารถตรวจสอบและประเมินคุณภาพของงานหรือผลลัพธ์ได้อย่างเป็นระบบ' },
-  { id:'S18', dbColumn:'s18_reading_comprehension', onetKey:'Reading Comprehension',              type:'skill',     text:'ฉันสามารถอ่านและทำความเข้าใจเอกสารหรือข้อมูลที่ซับซ้อนได้' },
-  { id:'S19', dbColumn:'s19_repairing',             onetKey:'Repairing',                          type:'skill',     text:'ฉันสามารถแก้ไขหรือซ่อมแซมระบบ อุปกรณ์ หรือโค้ดที่เสียหายได้' },
-  { id:'S20', dbColumn:'s20_science',               onetKey:'Science',                            type:'skill',     text:'ฉันสามารถประยุกต์ใช้หลักการทางวิทยาศาสตร์หรือคณิตศาสตร์ในการแก้ปัญหาได้' },
-  { id:'S21', dbColumn:'s21_social_perceptiveness', onetKey:'Social Perceptiveness',              type:'skill',     text:'ฉันสามารถสังเกตและเข้าใจความรู้สึกหรือปฏิกิริยาของคนรอบข้างได้' },
-  { id:'S22', dbColumn:'s22_systems_analysis',      onetKey:'Systems Analysis',                   type:'skill',     text:'ฉันสามารถมองภาพรวมของระบบและเข้าใจว่าแต่ละส่วนเชื่อมโยงกันอย่างไร' },
-  { id:'S23', dbColumn:'s23_systems_evaluation',    onetKey:'Systems Evaluation',                 type:'skill',     text:'ฉันสามารถประเมินว่าระบบที่ใช้งานอยู่ทำงานได้ตามวัตถุประสงค์หรือไม่' },
-  { id:'S24', dbColumn:'s24_technology_design',     onetKey:'Technology Design',                  type:'skill',     text:'ฉันสามารถออกแบบระบบหรือเครื่องมือทางเทคโนโลยีให้ตรงกับความต้องการผู้ใช้ได้' },
-  { id:'S25', dbColumn:'s25_troubleshooting',       onetKey:'Troubleshooting',                    type:'skill',     text:'ฉันสามารถค้นหาและแก้ไขสาเหตุของปัญหาทางเทคนิคได้อย่างเป็นระบบ' },
-  { id:'S26', dbColumn:'s26_writing',               onetKey:'Writing',                            type:'skill',     text:'ฉันสามารถเขียนเรื่องราวหรือเนื้อหาจากจินตนาการ และเล่าประสบการณ์จริงให้น่าอ่านได้' },
+  // ── 1. SKILLS (S01–S35) = 35 ข้อ ─────────────────────────────────────────
+  { id:'S01', dbColumn:'s_active_learning',           onetKey:'s_active_learning',           type:'skill', text:'ฉันสามารถเรียนรู้เรื่องใหม่ได้ด้วยตัวเองโดยไม่ต้องมีคนสอน' },
+  { id:'S02', dbColumn:'s_active_listening',          onetKey:'s_active_listening',          type:'skill', text:'ฉันสามารถรับฟังผู้อื่นได้อย่างตั้งใจและจับประเด็นสำคัญได้' },
+  { id:'S03', dbColumn:'s_complex_problem_solving',   onetKey:'s_complex_problem_solving',   type:'skill', text:'ฉันสามารถแก้ปัญหาที่ซับซ้อนหรือมีหลายตัวแปรได้อย่างเป็นระบบ' },
+  { id:'S04', dbColumn:'s_coordination',              onetKey:'s_coordination',              type:'skill', text:'ฉันสามารถประสานงานกับหลายฝ่ายพร้อมกันได้โดยไม่เกิดความสับสน' },
+  { id:'S05', dbColumn:'s_critical_thinking',         onetKey:'s_critical_thinking',         type:'skill', text:'ฉันสามารถวิเคราะห์ปัญหาและหาสาเหตุที่แท้จริงได้ก่อนตัดสินใจแก้ไข' },
+  { id:'S06', dbColumn:'s_equipment_maintenance',     onetKey:'s_equipment_maintenance',     type:'skill', text:'ฉันสามารถดูแลและบำรุงรักษาอุปกรณ์หรือเครื่องมือที่ใช้งานได้' },
+  { id:'S07', dbColumn:'s_equipment_selection',       onetKey:'s_equipment_selection',       type:'skill', text:'ฉันสามารถเลือกอุปกรณ์หรือเครื่องมือที่เหมาะสมกับงานแต่ละประเภทได้' },
+  { id:'S08', dbColumn:'s_installation',              onetKey:'s_installation',              type:'skill', text:'ฉันสามารถติดตั้งซอฟต์แวร์ ระบบ หรืออุปกรณ์ได้ด้วยตัวเอง' },
+  { id:'S09', dbColumn:'s_instructing',               onetKey:'s_instructing',               type:'skill', text:'ฉันสามารถอธิบายหรือสอนสิ่งที่ฉันรู้ให้คนอื่นเข้าใจได้' },
+  { id:'S10', dbColumn:'s_judgment_and_decision_making', onetKey:'s_judgment_and_decision_making', type:'skill', text:'ฉันสามารถตัดสินใจในสถานการณ์ที่มีข้อมูลไม่ครบหรือมีความกดดันได้' },
+  { id:'S11', dbColumn:'s_learning_strategies',        onetKey:'s_learning_strategies',        type:'skill', text:'ฉันสามารถวางแผนวิธีเรียนรู้ที่เหมาะสมกับแต่ละเนื้อหาได้' },
+  { id:'S12', dbColumn:'s_management_of_financial_resources', onetKey:'s_management_of_financial_resources', type:'skill', text:'ฉันสามารถวางแผนและควบคุมงบประมาณของโปรเจกต์หรือทีมได้' },
+  { id:'S13', dbColumn:'s_management_of_material_resources', onetKey:'s_management_of_material_resources', type:'skill', text:'ฉันสามารถบริหารจัดการวัสดุหรือทรัพยากรที่มีอยู่ให้เกิดประโยชน์สูงสุด' },
+  { id:'S14', dbColumn:'s_management_of_personnel_resources', onetKey:'s_management_of_personnel_resources', type:'skill', text:'ฉันสามารถมอบหมายงานและดูแลสมาชิกในทีมได้อย่างมีประสิทธิภาพ' },
+  { id:'S15', dbColumn:'s_mathematics',               onetKey:'s_mathematics',               type:'skill', text:'ฉันสามารถใช้คณิตศาสตร์หรือสถิติในการวิเคราะห์และแก้ปัญหาได้' },
+  { id:'S16', dbColumn:'s_monitoring',                onetKey:'s_monitoring',                type:'skill', text:'ฉันสามารถติดตามและตรวจสอบความคืบหน้าของงานหรือระบบได้อย่างสม่ำเสมอ' },
+  { id:'S17', dbColumn:'s_negotiation',               onetKey:'s_negotiation',               type:'skill', text:'ฉันสามารถเจรจาต่อรองเพื่อหาข้อตกลงที่ทุกฝ่ายยอมรับได้' },
+  { id:'S18', dbColumn:'s_operation_and_control',     onetKey:'s_operation_and_control',     type:'skill', text:'ฉันสามารถควบคุมการทำงานของระบบหรือกระบวนการให้เป็นไปตามแผน' },
+  { id:'S19', dbColumn:'s_operations_analysis',       onetKey:'s_operations_analysis',       type:'skill', text:'ฉันสามารถวิเคราะห์กระบวนการทำงานและหาจุดที่ควรปรับปรุงได้' },
+  { id:'S20', dbColumn:'s_operations_monitoring',     onetKey:'s_operations_monitoring',     type:'skill', text:'ฉันสามารถสังเกตเห็นความผิดปกติในระบบหรือกระบวนการได้ก่อนที่จะเกิดปัญหา' },
+  { id:'S21', dbColumn:'s_persuasion',                onetKey:'s_persuasion',                type:'skill', text:'ฉันสามารถโน้มน้าวหรือจูงใจผู้อื่นให้เห็นด้วยกับแนวคิดของฉันได้' },
+  { id:'S22', dbColumn:'s_programming',               onetKey:'s_programming',               type:'skill', text:'ฉันสามารถเขียนโปรแกรมหรือสคริปต์เพื่อแก้ปัญหาหรืออัตโนมัติงานได้' },
+  { id:'S23', dbColumn:'s_quality_control_analysis',  onetKey:'s_quality_control_analysis',  type:'skill', text:'ฉันสามารถตรวจสอบและประเมินคุณภาพของงานหรือผลลัพธ์ได้อย่างเป็นระบบ' },
+  { id:'S24', dbColumn:'s_reading_comprehension',     onetKey:'s_reading_comprehension',     type:'skill', text:'ฉันสามารถอ่านและทำความเข้าใจเอกสารหรือข้อมูลที่ซับซ้อนได้' },
+  { id:'S25', dbColumn:'s_repairing',                 onetKey:'s_repairing',                 type:'skill', text:'ฉันสามารถแก้ไขหรือซ่อมแซมระบบ อุปกรณ์ หรือโค้ดที่เสียหายได้' },
+  { id:'S26', dbColumn:'s_science',                   onetKey:'s_science',                   type:'skill', text:'ฉันสามารถประยุกต์ใช้หลักการทางวิทยาศาสตร์ในการแก้ปัญหาได้' },
+  { id:'S27', dbColumn:'s_service_orientation',       onetKey:'s_service_orientation',       type:'skill', text:'ฉันสามารถเข้าใจความต้องการของผู้ใช้และให้บริการได้ตรงจุด' },
+  { id:'S28', dbColumn:'s_social_perceptiveness',     onetKey:'s_social_perceptiveness',     type:'skill', text:'ฉันสามารถสังเกตและเข้าใจความรู้สึกหรือปฏิกิริยาของคนรอบข้างได้' },
+  { id:'S29', dbColumn:'s_speaking',                  onetKey:'s_speaking',                  type:'skill', text:'ฉันสามารถพูดนำเสนอหรืออธิบายไอเดียให้ผู้อื่นเข้าใจได้ชัดเจน' },
+  { id:'S30', dbColumn:'s_systems_analysis',          onetKey:'s_systems_analysis',          type:'skill', text:'ฉันสามารถมองภาพรวมของระบบและเข้าใจว่าแต่ละส่วนเชื่อมโยงกันอย่างไร' },
+  { id:'S31', dbColumn:'s_systems_evaluation',        onetKey:'s_systems_evaluation',        type:'skill', text:'ฉันสามารถประเมินว่าระบบที่ใช้งานอยู่ทำงานได้ตามวัตถุประสงค์หรือไม่' },
+  { id:'S32', dbColumn:'s_technology_design',         onetKey:'s_technology_design',         type:'skill', text:'ฉันสามารถออกแบบระบบหรือเครื่องมือทางเทคโนโลยีให้ตรงกับความต้องการผู้ใช้ได้' },
+  { id:'S33', dbColumn:'s_time_management',           onetKey:'s_time_management',           type:'skill', text:'ฉันสามารถจัดลำดับความสำคัญและบริหารเวลาให้งานเสร็จตามกำหนดได้' },
+  { id:'S34', dbColumn:'s_troubleshooting',           onetKey:'s_troubleshooting',           type:'skill', text:'ฉันสามารถค้นหาและแก้ไขสาเหตุของปัญหาทางเทคนิคได้อย่างเป็นระบบ' },
+  { id:'S35', dbColumn:'s_writing',                   onetKey:'s_writing',                   type:'skill', text:'ฉันสามารถเขียนเนื้อหาหรือเอกสารให้ผู้อื่นเข้าใจได้ชัดเจนและน่าอ่าน' },
 
-  // ── ATTITUDE ───────────────────────────────────────────────
-  { id:'A01', dbColumn:'a01_artistic',      onetKey:'Artistic',      type:'attitude', text:'ฉันชอบสร้างเนื้อหาจากจินตนาการ เล่าประสบการณ์ และคิดงานเชิงสร้างสรรค์ด้วย Design Thinking' },
-  { id:'A02', dbColumn:'a02_conventional',  onetKey:'Conventional',  type:'attitude', text:'ฉันชอบทำงานที่มีขั้นตอนชัดเจน ละเอียด มีระเบียบวินัย และใช้ตรรกะ' },
-  { id:'A03', dbColumn:'a03_enterprising',  onetKey:'Enterprising',  type:'attitude', text:'ฉันชอบนำเสนอ โน้มน้าวผู้อื่น ริเริ่มสิ่งใหม่ และมีบทบาทในการตัดสินใจหรือนำทีม' },
-  { id:'A04', dbColumn:'a04_investigative', onetKey:'Investigative', type:'attitude', text:'ฉันชอบค้นคว้าข้อมูล วิเคราะห์ปัญหา และทดลองหาคำตอบ' },
-  { id:'A05', dbColumn:'a05_realistic',     onetKey:'Realistic',     type:'attitude', text:'ฉันชอบทำงานที่เห็นผลลัพธ์ชัดเจน ซ่อมแซมสิ่งต่างๆ และทำงานกับเทคโนโลยีโดยตรง' },
-  { id:'A06', dbColumn:'a06_social',        onetKey:'Social',        type:'attitude', text:'ฉันชอบทำงานกับผู้คน ทำงานเป็นทีม ถ่ายทอดความรู้ และติดตามเหตุการณ์รอบตัว' },
+  // ── 2. KNOWLEDGE (K01–K33) = 33 ข้อ ───────────────────────────────────────
+  { id:'K01', dbColumn:'k_administration_and_management', onetKey:'k_administration_and_management', type:'knowledge', text:'ฉันมีความรู้ด้านการบริหารจัดการองค์กรและการวางแผนกลยุทธ์' },
+  { id:'K02', dbColumn:'k_administrative',                onetKey:'k_administrative',                type:'knowledge', text:'ฉันมีความรู้ด้านงานธุรการ การจัดการเอกสาร และระบบสำนักงาน' },
+  { id:'K03', dbColumn:'k_biology',                       onetKey:'k_biology',                       type:'knowledge', text:'ฉันมีความรู้ด้านชีววิทยาและสิ่งมีชีวิต' },
+  { id:'K04', dbColumn:'k_building_and_construction',     onetKey:'k_building_and_construction',     type:'knowledge', text:'ฉันมีความรู้ด้านการก่อสร้างและงานช่าง' },
+  { id:'K05', dbColumn:'k_chemistry',                     onetKey:'k_chemistry',                     type:'knowledge', text:'ฉันมีความรู้ด้านเคมีและสารประกอบ' },
+  { id:'K06', dbColumn:'k_communications_and_media',      onetKey:'k_communications_and_media',      type:'knowledge', text:'ฉันมีความรู้ด้านการสื่อสาร สื่อมวลชน และการผลิตคอนเทนต์' },
+  { id:'K07', dbColumn:'k_computers_and_electronics',     onetKey:'k_computers_and_electronics',     type:'knowledge', text:'ฉันมีความรู้ด้านคอมพิวเตอร์ ฮาร์ดแวร์ และอิเล็กทรอนิกส์' },
+  { id:'K08', dbColumn:'k_customer_and_personal_service', onetKey:'k_customer_and_personal_service', type:'knowledge', text:'ฉันมีความรู้ด้านการบริการลูกค้าและการสร้างความพึงพอใจ' },
+  { id:'K09', dbColumn:'k_design',                        onetKey:'k_design',                        type:'knowledge', text:'ฉันมีความรู้ด้านการออกแบบ หลักการ UX/UI และศิลปะ' },
+  { id:'K10', dbColumn:'k_economics_and_accounting',      onetKey:'k_economics_and_accounting',      type:'knowledge', text:'ฉันมีความรู้ด้านเศรษฐศาสตร์ การบัญชี และการเงิน' },
+  { id:'K11', dbColumn:'k_education_and_training',        onetKey:'k_education_and_training',        type:'knowledge', text:'ฉันมีความรู้ด้านการศึกษา การสอน และการออกแบบหลักสูตร' },
+  { id:'K12', dbColumn:'k_engineering_and_technology',    onetKey:'k_engineering_and_technology',    type:'knowledge', text:'ฉันมีความรู้ด้านวิศวกรรมและเทคโนโลยี' },
+  { id:'K13', dbColumn:'k_english_language',              onetKey:'k_english_language',              type:'knowledge', text:'ฉันมีความรู้ด้านภาษาอังกฤษและการสื่อสารเป็นภาษาอังกฤษ' },
+  { id:'K14', dbColumn:'k_fine_arts',                     onetKey:'k_fine_arts',                     type:'knowledge', text:'ฉันมีความรู้ด้านศิลปกรรม ดนตรี และงานสร้างสรรค์' },
+  { id:'K15', dbColumn:'k_food_production',               onetKey:'k_food_production',               type:'knowledge', text:'ฉันมีความรู้ด้านการผลิตอาหารและกระบวนการแปรรูป' },
+  { id:'K16', dbColumn:'k_foreign_language',              onetKey:'k_foreign_language',              type:'knowledge', text:'ฉันมีความรู้ด้านภาษาต่างประเทศนอกจากภาษาอังกฤษ' },
+  { id:'K17', dbColumn:'k_geography',                     onetKey:'k_geography',                     type:'knowledge', text:'ฉันมีความรู้ด้านภูมิศาสตร์และทรัพยากรธรรมชาติ' },
+  { id:'K18', dbColumn:'k_history_and_archeology',        onetKey:'k_history_and_archeology',        type:'knowledge', text:'ฉันมีความรู้ด้านประวัติศาสตร์และโบราณคดี' },
+  { id:'K19', dbColumn:'k_law_and_government',            onetKey:'k_law_and_government',            type:'knowledge', text:'ฉันมีความรู้ด้านกฎหมายและระบบการปกครอง' },
+  { id:'K20', dbColumn:'k_mathematics',                   onetKey:'k_mathematics',                   type:'knowledge', text:'ฉันมีความรู้ด้านคณิตศาสตร์ขั้นสูง สถิติ และการวิเคราะห์เชิงตัวเลข' },
+  { id:'K21', dbColumn:'k_mechanical',                    onetKey:'k_mechanical',                    type:'knowledge', text:'ฉันมีความรู้ด้านเครื่องกลและระบบกลไก' },
+  { id:'K22', dbColumn:'k_medicine_and_dentistry',        onetKey:'k_medicine_and_dentistry',        type:'knowledge', text:'ฉันมีความรู้ด้านการแพทย์ ทันตกรรม และสุขภาพ' },
+  { id:'K23', dbColumn:'k_personnel_and_human_resources', onetKey:'k_personnel_and_human_resources', type:'knowledge', text:'ฉันมีความรู้ด้านการบริหารบุคคลและทรัพยากรมนุษย์' },
+  { id:'K24', dbColumn:'k_philosophy_and_theology',       onetKey:'k_philosophy_and_theology',       type:'knowledge', text:'ฉันมีความรู้ด้านปรัชญา จริยธรรม และศาสนา' },
+  { id:'K25', dbColumn:'k_physics',                       onetKey:'k_physics',                       type:'knowledge', text:'ฉันมีความรู้ด้านฟิสิกส์และกฎธรรมชาติ' },
+  { id:'K26', dbColumn:'k_production_and_processing',     onetKey:'k_production_and_processing',     type:'knowledge', text:'ฉันมีความรู้ด้านการผลิตและกระบวนการผลิตในอุตสาหกรรม' },
+  { id:'K27', dbColumn:'k_psychology',                    onetKey:'k_psychology',                    type:'knowledge', text:'ฉันมีความรู้ด้านจิตวิทยาและพฤติกรรมมนุษย์' },
+  { id:'K28', dbColumn:'k_public_safety_and_security',    onetKey:'k_public_safety_and_security',    type:'knowledge', text:'ฉันมีความรู้ด้านความปลอดภัยสาธารณะและการรักษาความปลอดภัย' },
+  { id:'K29', dbColumn:'k_sales_and_marketing',           onetKey:'k_sales_and_marketing',           type:'knowledge', text:'ฉันมีความรู้ด้านการขายและการตลาดดิจิทัล' },
+  { id:'K30', dbColumn:'k_sociology_and_anthropology',    onetKey:'k_sociology_and_anthropology',    type:'knowledge', text:'ฉันมีความรู้ด้านสังคมศาสตร์และมานุษยวิทยา' },
+  { id:'K31', dbColumn:'k_telecommunications',            onetKey:'k_telecommunications',            type:'knowledge', text:'ฉันมีความรู้ด้านโทรคมนาคม เครือข่าย และโปรโตคอล' },
+  { id:'K32', dbColumn:'k_therapy_and_counseling',        onetKey:'k_therapy_and_counseling',        type:'knowledge', text:'ฉันมีความรู้ด้านการให้คำปรึกษาและบำบัด' },
+  { id:'K33', dbColumn:'k_transportation',                onetKey:'k_transportation',                type:'knowledge', text:'ฉันมีความรู้ด้านการขนส่งและโลจิสติกส์' },
 
-  // ── KNOWLEDGE ──────────────────────────────────────────────
-  { id:'K01', dbColumn:'k01_administration',  onetKey:'Administration and Management', type:'knowledge', text:'ฉันมีความรู้ด้านการบริหารจัดการองค์กร' },
-  { id:'K02', dbColumn:'k02_biology',         onetKey:'Biology',                       type:'knowledge', text:'ฉันมีความรู้ด้านชีววิทยา' },
-  { id:'K03', dbColumn:'k03_construction',    onetKey:'Building and Construction',     type:'knowledge', text:'ฉันมีความรู้ด้านการก่อสร้างและงานช่าง' },
-  { id:'K04', dbColumn:'k04_chemistry',       onetKey:'Chemistry',                     type:'knowledge', text:'ฉันมีความรู้ด้านเคมี' },
-  { id:'K05', dbColumn:'k05_communications',  onetKey:'Communications and Media',      type:'knowledge', text:'ฉันมีความรู้ด้านการสื่อสารและสื่อมวลชน' },
-  { id:'K06', dbColumn:'k06_computers',       onetKey:'Computers and Electronics',     type:'knowledge', text:'ฉันมีความรู้ด้านคอมพิวเตอร์และอิเล็กทรอนิกส์' },
-  { id:'K07', dbColumn:'k07_counseling',      onetKey:'Counseling and Mental Health',  type:'knowledge', text:'ฉันมีความรู้ด้านการให้คำปรึกษาและแนะแนว' },
-  { id:'K08', dbColumn:'k08_design',          onetKey:'Design',                        type:'knowledge', text:'ฉันมีความรู้ด้านการออกแบบและศิลปะ' },
-  { id:'K09', dbColumn:'k09_economics',       onetKey:'Economics and Accounting',      type:'knowledge', text:'ฉันมีความรู้ด้านเศรษฐศาสตร์และการบัญชี' },
-  { id:'K10', dbColumn:'k10_education',       onetKey:'Education and Training',        type:'knowledge', text:'ฉันมีความรู้ด้านการศึกษาและการสอน' },
-  { id:'K11', dbColumn:'k11_engineering',     onetKey:'Engineering and Technology',    type:'knowledge', text:'ฉันมีความรู้ด้านวิศวกรรมและเทคโนโลยี' },
-  { id:'K12', dbColumn:'k12_healthcare',      onetKey:'Medicine and Dentistry',        type:'knowledge', text:'ฉันมีความรู้ด้านการดูแลสุขภาพและการแพทย์' },
-  { id:'K13', dbColumn:'k13_foreign_language',onetKey:'Foreign Language',              type:'knowledge', text:'ฉันมีความรู้ด้านภาษาต่างประเทศ' },
-  { id:'K14', dbColumn:'k14_geography',       onetKey:'Geography',                     type:'knowledge', text:'ฉันมีความรู้ด้านธรณีวิทยาและทรัพยากรธรรมชาติ' },
-  { id:'K15', dbColumn:'k15_history',         onetKey:'History and Archeology',        type:'knowledge', text:'ฉันมีความรู้ด้านประวัติศาสตร์และโบราณคดี' },
-  { id:'K16', dbColumn:'k16_law',             onetKey:'Law and Government',            type:'knowledge', text:'ฉันมีความรู้ด้านกฎหมาย' },
-  { id:'K17', dbColumn:'k17_logistics',       onetKey:'Transportation',                type:'knowledge', text:'ฉันมีความรู้ด้านการจัดการโลจิสติกส์และขนส่ง' },
-  { id:'K18', dbColumn:'k18_mathematics',     onetKey:'Mathematics',                   type:'knowledge', text:'ฉันมีความรู้ด้านคณิตศาสตร์' },
-  { id:'K19', dbColumn:'k19_medicine',        onetKey:'Therapy and Counseling',        type:'knowledge', text:'ฉันมีความรู้ด้านทันตกรรมและการแพทย์' },
-  { id:'K20', dbColumn:'k20_hr',              onetKey:'Personnel and Human Resources', type:'knowledge', text:'ฉันมีความรู้ด้านการบริหารบุคคลและทรัพยากรมนุษย์' },
-  { id:'K21', dbColumn:'k21_physics',         onetKey:'Physics',                       type:'knowledge', text:'ฉันมีความรู้ด้านฟิสิกส์' },
-  { id:'K22', dbColumn:'k22_production',      onetKey:'Production and Processing',     type:'knowledge', text:'ฉันมีความรู้ด้านการผลิตและกระบวนการผลิต' },
-  { id:'K23', dbColumn:'k23_psychology',      onetKey:'Psychology',                    type:'knowledge', text:'ฉันมีความรู้ด้านจิตวิทยา' },
-  { id:'K24', dbColumn:'k24_public_safety',   onetKey:'Public Safety and Security',    type:'knowledge', text:'ฉันมีความรู้ด้านความปลอดภัยสาธารณะ' },
-  { id:'K25', dbColumn:'k25_sales_marketing', onetKey:'Sales and Marketing',           type:'knowledge', text:'ฉันมีความรู้ด้านการขายและการตลาด' },
-  { id:'K26', dbColumn:'k26_sociology',       onetKey:'Sociology and Anthropology',    type:'knowledge', text:'ฉันมีความรู้ด้านสังคมศาสตร์และมานุษยวิทยา' },
-  { id:'K27', dbColumn:'k27_telecommunications', onetKey:'Telecommunications',         type:'knowledge', text:'ฉันมีความรู้ด้านโทรคมนาคมและเครือข่าย' },
-  { id:'K28', dbColumn:'k28_transportation',  onetKey:'Mechanical',                    type:'knowledge', text:'ฉันมีความรู้ด้านการขนส่งและยานพาหนะ' },
-  { id:'K29', dbColumn:'k29_thai_language',   onetKey:'English Language',              type:'knowledge', text:'ฉันมีความรู้ด้านภาษาไทยและการใช้ภาษาเพื่อการสื่อสาร' },
+  // ── 3. ATTITUDE (A01–A06) = 6 ข้อ ─────────────────────────────────────────
+  { id:'A01', dbColumn:'a_artistic',      onetKey:'a_artistic',      type:'attitude', text:'... (ชอบสร้างเนื้อหาจากจินตนาการ คิดงานเชิงสร้างสรรค์)' },
+  { id:'A02', dbColumn:'a_conventional',  onetKey:'a_conventional',  type:'attitude', text:'... (ชอบทำงานที่มีขั้นตอนชัดเจน ละเอียด มีระเบียบ)' },
+  { id:'A03', dbColumn:'a_enterprising',  onetKey:'a_enterprising',  type:'attitude', text:'... (ชอบนำเสนอ โน้มน้าวผู้อื่น มีบทบาทนำในทีม)' },
+  { id:'A04', dbColumn:'a_investigative', onetKey:'a_investigative', type:'attitude', text:'... (ชอบค้นคว้าข้อมูล วิเคราะห์ปัญหา และทดลองหาคำตอบ)' },
+  { id:'A05', dbColumn:'a_realistic',     onetKey:'a_realistic',     type:'attitude', text:'... (ชอบทำงานที่เห็นผลชัดเจน ทำงานกับระบบโดยตรง)' },
+  { id:'A06', dbColumn:'a_social',        onetKey:'a_social',        type:'attitude', text:'... (ชอบทำงานกับผู้คน ช่วยเหลือผู้อื่น และทำงานเป็นทีม)' },
 ]
-
-// แปลงคำตอบ { "S01": 4, "K06": 3 } → { skill: { onetKey: score }, knowledge: { onetKey: score } }
-export function mapAnswersToOnet(
+// แปลงคำตอบ slider (0-100) → format สำหรับคำนวณ
+// key คือ dbColumn เลย ไม่ต้องแปลงอีกรอบ
+export function mapAnswersToScoring(
   rawAnswers: Record<string, number>
-): { skill: Record<string, number>; knowledge: Record<string, number> } {
-  const skill: Record<string, number> = {}
-  const knowledge: Record<string, number> = {}
-
+): Record<string, number> {
+  const result: Record<string, number> = {}
   for (const q of QUESTIONS) {
-    const likert = rawAnswers[q.id]
-    if (likert == null) continue
-    const score = likert * 20  // 1→20, 2→40, 3→60, 4→80, 5→100
-
-    if (q.type === 'skill' || q.type === 'attitude') {
-      skill[q.onetKey] = score
-    } else {
-      knowledge[q.onetKey] = score
+    if (rawAnswers[q.id] != null) {
+      // slider ส่งมา 0–100 ตรงๆ ไม่ต้องคูณอะไรเพิ่ม
+      result[q.dbColumn] = rawAnswers[q.id]
     }
   }
-
-  return { skill, knowledge }
+  return result
 }
 
 // แปลงคำตอบ → format column สำหรับ insert Supabase
 export function mapAnswersToDb(
   rawAnswers: Record<string, number>
 ): Record<string, number> {
-  const result: Record<string, number> = {}
+  return mapAnswersToScoring(rawAnswers)
+}
+
+// Legacy export — ใช้ใน scoring.ts เดิม (ถ้าจำเป็น)
+export function mapAnswersToOnet(
+  rawAnswers: Record<string, number>
+): { skill: Record<string, number>; knowledge: Record<string, number> } {
+  const flat = mapAnswersToScoring(rawAnswers)
+  const skill: Record<string, number> = {}
+  const knowledge: Record<string, number> = {}
   for (const q of QUESTIONS) {
-    if (rawAnswers[q.id] != null) {
-      result[q.dbColumn] = rawAnswers[q.id]
+    if (flat[q.dbColumn] == null) continue
+    if (q.type === 'knowledge') {
+      knowledge[q.dbColumn] = flat[q.dbColumn]
+    } else {
+      skill[q.dbColumn] = flat[q.dbColumn]
     }
   }
-  return result
+  return { skill, knowledge }
 }
