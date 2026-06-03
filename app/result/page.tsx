@@ -3,6 +3,13 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import TabNav from '../../components/TabNav'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
 type Career = {
   careerId: string
   name: string
@@ -90,7 +97,6 @@ function getCareerPic(careerId: string, sector: string): string {
 }
 
 export const COL_LABEL: Record<string, string> = {
-  // Skills
   s_active_learning: 'การเรียนรู้เชิงรุก',
   s_active_listening: 'การฟังเชิงรุก',
   s_complex_problem_solving: 'การแก้ปัญหาซับซ้อน',
@@ -126,8 +132,6 @@ export const COL_LABEL: Record<string, string> = {
   s_time_management: 'การบริหารเวลา',
   s_troubleshooting: 'การแก้ปัญหาทางเทคนิค',
   s_writing: 'การเขียน',
-
-  // Knowledge
   k_administration_and_management: 'การบริหารและการจัดการ',
   k_administrative: 'งานธุรการ',
   k_biology: 'ชีววิทยา',
@@ -161,8 +165,6 @@ export const COL_LABEL: Record<string, string> = {
   k_telecommunications: 'โทรคมนาคม',
   k_therapy_and_counseling: 'การบำบัดและการให้คำปรึกษา',
   k_transportation: 'การขนส่ง',
-
-  // Interests (RIASEC)
   a_realistic: 'ภาคปฏิบัติ',
   a_investigative: 'นักวิเคราะห์',
   a_artistic: 'ศิลปะสร้างสรรค์',
@@ -170,6 +172,7 @@ export const COL_LABEL: Record<string, string> = {
   a_enterprising: 'ผู้ประกอบการ',
   a_conventional: 'เป็นระบบระเบียบ',
 }
+
 function toLabel(col: string): string {
   return COL_LABEL[col] ?? col.replace(/^[ska]_/, '').replace(/_/g, ' ')
 }
@@ -179,7 +182,7 @@ const SECTOR_ICONS: Record<string, string[]> = {
   DC: ['🎨', '✏️', '💡'],
 }
 
-/// ── Radar Chart ───────────────────────────────────────────────
+// ─── Radar Chart ──────────────────────────────────────────────────────────────
 function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Theme }) {
   const entries = Object.entries(gaps)
     .filter(([, v]) => v > 0)
@@ -206,12 +209,7 @@ function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Them
   const polygon = dataPoints.map(p => `${p.x},${p.y}`).join(' ')
   const grid = (s: number) => entries.map((_, i) => { const p = pt(i, s); return `${p.x},${p.y}` }).join(' ')
 
-  // กำหนดขนาดกล่องข้อความป้ายกำกับทักษะ
-  const boxWidth = 90
-  const boxHeight = 36
-
   return (
-    // เพิ่ม padding: '0 25px' และขยายช่องเพื่อให้ข้อความด้านข้างไม่ตกขอบจอ
     <div style={{ width: '100%', maxWidth: '420px', margin: '0 auto', overflow: 'visible', padding: '0 25px' }}>
       <svg width="100%" height="100%" viewBox="0 0 320 320" style={{ display: 'block', overflow: 'visible' }}>
         {[0.25, 0.5, 0.75, 1].map(s => (
@@ -227,68 +225,31 @@ function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Them
           <circle key={i} cx={p.x} cy={p.y} r="3.5" fill={theme.radarStroke} />
         ))}
         {entries.map(([col, val], i) => {
-          // คำนวณมุมตามจุดยอดของเรดาร์
           const angle = i * step - Math.PI / 2
           const cos = Math.cos(angle)
           const sin = Math.sin(angle)
-
-          // ดึงข้อความทักษะออกม แปลงเป็นภาษาไทย
           const label = toLabel(col)
-
-          // ปรับระยะห่าง (Scale) ของกล่องข้อความให้ออกมาจากศูนย์กลางกราฟอย่างพอดี
-          // ลดลงมานิดหน่อยจากโค้ดเดิมเพราะตอนนี้เราเอาตัวเลขคะแนนไปรวมอยู่ในกล่องแล้ว
           const lpScale = 1.40
           const lp = { x: cx + r * lpScale * cos, y: cy + r * lpScale * sin }
-
-          // กำหนดขนาดกล่องข้อความให้กว้างพอสำหรับภาษาไทยและอังกฤษยาวๆ
           const boxWidth = 120
           const boxHeight = 50
-
-          // คำนวณพิกัด X, Y เพื่อให้ศูนย์กลางของกล่อง foreignObject ตรงกับพิกัด lp พอดี
           const boxX = lp.x - boxWidth / 2
           const boxY = lp.y - boxHeight / 2
 
           return (
             <g key={i}>
-              {/* ใช้ foreignObject กล่องเดียว มัดรวมทั้งตัวเลขและข้อความเข้าด้วยกัน */}
-              <foreignObject
-                x={boxX}
-                y={boxY}
-                width={boxWidth}
-                height={boxHeight}
-                style={{ overflow: 'visible' }}
-              >
+              <foreignObject x={boxX} y={boxY} width={boxWidth} height={boxHeight} style={{ overflow: 'visible' }}>
                 <div style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column', // เรียงจากบนลงล่าง
-                  alignItems: 'center',    // จัดกึ่งกลางแนวนอน
-                  justifyContent: 'center', // จัดกึ่งกลางแนวตั้ง
-                  textAlign: 'center',
-                  lineHeight: '1.2',
+                  width: '100%', height: '100%',
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  textAlign: 'center', lineHeight: '1.2',
                   fontFamily: "'Noto Sans Thai', 'Sarabun', sans-serif",
                 }}>
-                  {/* 1. ตัวเลขคะแนน Gap แสดงผลด้านบน */}
-                  <span style={{
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    color: theme.radarStroke,
-                    marginBottom: '2px', // เว้นระยะห่างระหว่างตัวเลขกับข้อความทักษะ
-                    display: 'block'
-                  }}>
+                  <span style={{ fontSize: '10px', fontWeight: '700', color: theme.radarStroke, marginBottom: '2px', display: 'block' }}>
                     {Math.round(val)}
                   </span>
-
-                  {/* 2. ชื่อทักษะแสดงผลด้านล่างตัวเลข ขึ้นบรรทัดใหม่ตามช่องไฟช่องว่าง ไม่ฉีกพยางค์กลางคำ */}
-                  <span style={{
-                    fontSize: '8.5px',
-                    color: '#5a6480',
-                    whiteSpace: 'normal',
-                    wordBreak: 'normal',       // ป้องกันการฉีกกลางพยางค์คำภาษาไทย/อังกฤษ
-                    overflowWrap: 'break-word', // ยอมให้ตัดคำตรงช่องว่าง (Space) เมื่อความยาวเกินขอบกล่อง
-                    display: 'block'
-                  }}>
+                  <span style={{ fontSize: '8.5px', color: '#5a6480', whiteSpace: 'normal', wordBreak: 'normal', overflowWrap: 'break-word', display: 'block' }}>
                     {label}
                   </span>
                 </div>
@@ -300,6 +261,7 @@ function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Them
     </div>
   )
 }
+
 // ─── Unlock Banner (guest only) ───────────────────────────────────────────────
 function UnlockBanner({ theme, sector }: { theme: Theme; sector: string }) {
   const router = useRouter()
@@ -350,6 +312,7 @@ function UnlockBanner({ theme, sector }: { theme: Theme; sector: string }) {
     </div>
   )
 }
+
 // ─── Feature preview cards (guest only) ──────────────────────────────────────
 function LockedFeatures({ theme }: { theme: Theme }) {
   const features = [
@@ -378,7 +341,6 @@ function LockedFeatures({ theme }: { theme: Theme }) {
             overflow: 'hidden',
             opacity: 0.75,
           }}>
-            {/* blur overlay */}
             <div style={{
               position: 'absolute', inset: 0,
               backdropFilter: 'blur(1px)',
@@ -396,6 +358,7 @@ function LockedFeatures({ theme }: { theme: Theme }) {
     </div>
   )
 }
+
 // ── Main ──────────────────────────────────────────────────────
 function ResultContent() {
   const router = useRouter()
@@ -403,6 +366,8 @@ function ResultContent() {
   const [sector, setSector] = useState('DT')
   const [loading, setLoading] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
     const checkSize = () => setIsMobile(window.innerWidth < 768)
@@ -418,12 +383,36 @@ function ResultContent() {
     } catch { router.replace('/') }
     setLoading(false)
 
-    return () => window.removeEventListener('resize', checkSize)
+    // เช็ค Supabase auth
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data.session)
+      setAuthChecked(true)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setIsLoggedIn(!!session)
+      setAuthChecked(true)
+    })
+
+    return () => {
+      window.removeEventListener('resize', checkSize)
+      subscription.unsubscribe()
+    }
   }, [router])
 
-  if (loading) return (
+  if (loading || !authChecked) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f0eb' }}>
-      <p style={{ fontFamily: "'Noto Sans Thai', sans-serif", fontSize: '1.2rem', color: '#2c2927' }}>กำลังโหลด...</p>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          width: 36, height: 36, border: '3px solid #d0d5e8',
+          borderTopColor: '#4a6fc4', borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite', margin: '0 auto 1rem',
+        }} />
+        <p style={{ fontFamily: "'Noto Sans Thai', sans-serif", fontSize: '0.9rem', color: '#5a6480' }}>
+          กำลังโหลด...
+        </p>
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
 
@@ -450,7 +439,6 @@ function ResultContent() {
     .slice(0, 5)
     .map(([col]) => toLabel(col))
 
-  // Component ส่วนจุดเด่นเพื่อนำไปใช้ซ้ำในการย้ายตำแหน่งตาม Device
   const StrengthsCard = () => (
     <div style={{
       background: 'white',
@@ -461,7 +449,6 @@ function ResultContent() {
       marginBottom: isMobile ? '1.1rem' : '0'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: '0.75rem' }}>
-        
         <span style={{ fontWeight: 700, fontSize: '0.82rem', color: '#2d3a5c' }}>จุดเด่นของตัวคุณ</span>
       </div>
       {strengths.map((s, i) => (
@@ -490,6 +477,7 @@ function ResultContent() {
       padding: '0 0 4rem',
     }}>
       <TabNav />
+
       {/* ── Header ── */}
       <div style={{ textAlign: 'center', padding: isMobile ? '1.5rem 1rem 1rem' : '2rem 1rem 1.25rem' }}>
         <h1 style={{ fontSize: isMobile ? '1.35rem' : '1.6rem', fontWeight: 700, color: '#1a1a2e', margin: 0, lineHeight: 1.4 }}>
@@ -511,7 +499,7 @@ function ResultContent() {
           marginBottom: '1.5rem',
         }}>
 
-          {/* ── LEFT (ซองจดหมายและโพลารอยด์ซ้อนมิติ) ── */}
+          {/* ── LEFT ── */}
           <div style={{
             background: theme.cardBg,
             padding: isMobile ? '1.5rem 1rem 1.25rem' : '2rem 1.5rem',
@@ -522,8 +510,6 @@ function ResultContent() {
             justifyContent: 'flex-start',
             width: isMobile ? '100%' : '43%',
           }}>
-
-            {/* ส่วนจัดเรียงการ์ดในซองจดหมาย */}
             <div style={{
               width: '100%',
               maxWidth: isMobile ? '260px' : '100%',
@@ -533,125 +519,60 @@ function ResultContent() {
               margin: '0 auto',
             }}>
               <div style={{
-                position: 'absolute',
-                bottom: '45%',
-                left: '0', right: '0',
-                height: '0',
-                borderStyle: 'solid',
-                borderWidth: '0 50% 70px 50%',
-                borderColor: 'transparent transparent rgba(255, 255, 255, 0.84) transparent',
-                zIndex: 0,
+                position: 'absolute', bottom: '45%', left: '0', right: '0', height: '0',
+                borderStyle: 'solid', borderWidth: '0 50% 70px 50%',
+                borderColor: 'transparent transparent rgba(255, 255, 255, 0.84) transparent', zIndex: 0,
               }} />
-
               <div style={{
-                position: 'absolute',
-                width: '85%',
-                height: '65%',
-                left: '10%',
-                top: '0%',
-                background: 'rgba(255, 255, 255, 0.4)',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.6)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                transform: 'rotate(-4deg)',
-                zIndex: 0,
+                position: 'absolute', width: '85%', height: '65%', left: '10%', top: '0%',
+                background: 'rgba(255, 255, 255, 0.4)', borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.6)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                transform: 'rotate(-4deg)', zIndex: 0,
               }} />
-
               <div style={{
-                position: 'absolute',
-                width: '60%',
-                height: '65%',
-                right: '5%',
-                top: '5%',
-                background: '#ffffff',
-                padding: '8px 8px 24px 8px',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
-                transform: 'rotate(5deg)',
-                zIndex: 2,
+                position: 'absolute', width: '60%', height: '65%', right: '5%', top: '5%',
+                background: '#ffffff', padding: '8px 8px 24px 8px',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.12)', transform: 'rotate(5deg)', zIndex: 2,
               }}>
                 <div style={{ width: '100%', height: '100%', position: 'relative', background: '#eee' }}>
-                  <Image
-                    src={picSrc}
-                    alt={top1.name}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    priority
-                  />
+                  <Image src={picSrc} alt={top1.name} fill style={{ objectFit: 'cover' }} priority />
                 </div>
               </div>
-
               <div style={{
-                position: 'absolute',
-                width: '45%',
-                height: '52%',
-                left: '5%',
-                top: '15%',
-                background: '#ffffff',
-                padding: '6px 6px 18px 6px',
-                boxShadow: '0 6px 16px rgba(0,0,0,0.1)',
-                transform: 'rotate(-8deg)',
-                zIndex: 3,
+                position: 'absolute', width: '45%', height: '52%', left: '5%', top: '15%',
+                background: '#ffffff', padding: '6px 6px 18px 6px',
+                boxShadow: '0 6px 16px rgba(0,0,0,0.1)', transform: 'rotate(-8deg)', zIndex: 3,
               }}>
                 <div style={{ width: '100%', height: '100%', position: 'relative', background: '#e5e5e5' }}>
-                  <Image
-                    src={picSrc}
-                    alt="Mini thumbnail"
-                    fill
-                    style={{ objectFit: 'cover', filter: 'sepia(0.2)' }}
-                  />
+                  <Image src={picSrc} alt="Mini thumbnail" fill style={{ objectFit: 'cover', filter: 'sepia(0.2)' }} />
                 </div>
               </div>
-
               <div style={{
-                position: 'absolute',
-                right: '2%',
-                top: '10%',
-                background: theme.accentLight,
-                color: theme.accentText,
-                padding: '4px 10px',
-                fontSize: '0.62rem',
-                fontWeight: 700,
-                letterSpacing: '1px',
-                transform: 'rotate(12deg)',
-                boxShadow: '2px 2px 5px rgba(0,0,0,0.05)',
-                whiteSpace: 'nowrap',
-                borderRadius: '2px',
-                zIndex: 4,
-                borderLeft: `2px solid ${theme.accent}`
+                position: 'absolute', right: '2%', top: '10%',
+                background: theme.accentLight, color: theme.accentText,
+                padding: '4px 10px', fontSize: '0.62rem', fontWeight: 700,
+                letterSpacing: '1px', transform: 'rotate(12deg)',
+                boxShadow: '2px 2px 5px rgba(0,0,0,0.05)', whiteSpace: 'nowrap',
+                borderRadius: '2px', zIndex: 4, borderLeft: `2px solid ${theme.accent}`
               }}>
                 TOP PATHWAY
               </div>
-
               <div style={{
-                position: 'absolute',
-                bottom: '0',
-                left: '0',
-                right: '0',
-                height: '45%',
-                background: '#ffffff',
-                borderRadius: '0 0 16px 16px',
+                position: 'absolute', bottom: '0', left: '0', right: '0', height: '45%',
+                background: '#ffffff', borderRadius: '0 0 16px 16px',
                 boxShadow: '0 -4px 15px rgba(0,0,0,0.03), 0 4px 10px rgba(0,0,0,0.05)',
-                zIndex: 5,
-                borderTop: '1px solid rgba(0,0,0,0.06)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '0 1rem',
+                zIndex: 5, borderTop: '1px solid rgba(0,0,0,0.06)',
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                alignItems: 'center', padding: '0 1rem',
               }}>
                 <div style={{
-                  position: 'absolute',
-                  top: '0', left: '0', right: '0',
-                  height: '0',
-                  borderStyle: 'solid',
-                  borderWidth: '15px 140px 0 140px',
-                  borderColor: 'rgba(0,0,0,0.04) transparent transparent transparent',
-                  zIndex: 0,
+                  position: 'absolute', top: '0', left: '0', right: '0', height: '0',
+                  borderStyle: 'solid', borderWidth: '15px 140px 0 140px',
+                  borderColor: 'rgba(0,0,0,0.04) transparent transparent transparent', zIndex: 0,
                 }} />
               </div>
             </div>
 
-            {/* แสดงจุดเด่นที่ฝั่งซ้ายเฉพาะเมื่อเป็นหน้าจอ Desktop เท่านั้น */}
             {!isMobile && <StrengthsCard />}
           </div>
 
@@ -659,26 +580,18 @@ function ResultContent() {
           <div style={{
             padding: isMobile ? '1.5rem 1rem' : '2rem 2rem 1.75rem',
             width: isMobile ? '100%' : '57%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
           }}>
             <div>
-            
-
               <h2 style={{
-                fontSize: isMobile ? '1.8rem' : '2.4rem',
-                fontWeight: 800,
-                color: '#1a1a2e', margin: '0 0 0.8rem',
-                lineHeight: 1.2, letterSpacing: '-0.5px',
+                fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 800,
+                color: '#1a1a2e', margin: '0 0 0.8rem', lineHeight: 1.2, letterSpacing: '-0.5px',
               }}>
                 {top1.name}
               </h2>
 
-              {/* แทรกจุดเด่นไว้ใต้อาชีพหลักทันทีเมื่อเปิดบนโทรศัพท์ (Mobile) */}
               {isMobile && <StrengthsCard />}
 
-              {/* Top2 & Top3 */}
               {top2and3.length > 0 && (
                 <div style={{
                   background: theme.sectionBg, borderRadius: '16px',
@@ -689,40 +602,19 @@ function ResultContent() {
                   </p>
                   <div style={{ display: 'flex', gap: '1.5rem' }}>
                     {top2and3.map((c) => {
-                      // ดึง Path รูปภาพจากโครงสร้างที่มีอยู่ ถ้านอกเหนือจากลิสต์จะ Fallback ไปที่รูปภาพ Sector หลัก
                       const iconSrc = getCareerPic(c.careerId, sector)
-
                       return (
-                        <div key={c.careerId} style={{
-                          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-                        }}>
-                          {/* กล่องใส่ไอคอนรูปภาพอาชีพ */}
+                        <div key={c.careerId} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                           <div style={{
-                            width: 54, height: 54,
-                            background: 'white',
-                            borderRadius: '14px',
+                            width: 54, height: 54, background: 'white', borderRadius: '14px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                             border: `1.5px solid ${theme.accentMid}`,
-                            position: 'relative', // จำเป็นสำหรับ layout fill ของ Next.js Image
-                            overflow: 'hidden',
+                            position: 'relative', overflow: 'hidden',
                           }}>
-                            <Image
-                              src={iconSrc}
-                              alt={c.name}
-                              fill
-                              sizes="54px"
-                              style={{
-                                objectFit: 'cover',
-                                padding: '2px' // เว้นขอบนิดหน่อยให้ดูเป็นไอคอนในกรอบรูปสวยงาม
-                              }}
-                            />
+                            <Image src={iconSrc} alt={c.name} fill sizes="54px" style={{ objectFit: 'cover', padding: '2px' }} />
                           </div>
-                          <span style={{
-                            fontSize: '0.7rem', color: '#4a5568',
-                            textAlign: 'center', maxWidth: 85, lineHeight: 1.4,
-                            fontFamily: "'Noto Sans Thai', sans-serif"
-                          }}>
+                          <span style={{ fontSize: '0.7rem', color: '#4a5568', textAlign: 'center', maxWidth: 85, lineHeight: 1.4, fontFamily: "'Noto Sans Thai', sans-serif" }}>
                             {c.name}
                           </span>
                         </div>
@@ -734,12 +626,7 @@ function ResultContent() {
             </div>
 
             {/* Radar */}
-            <div style={{
-              background: theme.sectionBg,
-              borderRadius: '16px',
-              padding: '1rem 0.75rem',
-              marginTop: 'auto'
-            }}>
+            <div style={{ background: theme.sectionBg, borderRadius: '16px', padding: '1rem 0.75rem', marginTop: 'auto' }}>
               <p style={{ fontSize: '0.80rem', fontWeight: 700, color: '#2d3a5c', textAlign: 'center', marginBottom: '0.1rem' }}>
                 ทักษะที่ควรพัฒนาเพิ่มเติมสำหรับสายงาน
               </p>
@@ -754,11 +641,8 @@ function ResultContent() {
 
         {/* ── Buttons ── */}
         <div style={{
-          display: 'flex',
-          gap: '0.75rem',
-          justifyContent: 'center',
-          flexDirection: isMobile ? 'column-reverse' : 'row',
-          width: '100%'
+          display: 'flex', gap: '0.75rem', justifyContent: 'center',
+          flexDirection: isMobile ? 'column-reverse' : 'row', width: '100%'
         }}>
           <button
             onClick={() => { sessionStorage.removeItem('caria_result'); router.push('/') }}
@@ -770,20 +654,46 @@ function ResultContent() {
               width: isMobile ? '100%' : 'auto'
             }}
           >กลับไปหน้า HOME</button>
-          <button
-            onClick={() => router.push('/skills?sector=' + sector)}
-            style={{
-              background: theme.btnGapBg, color: theme.btnGapColor,
-              border: 'none', borderRadius: '999px',
-              padding: '0.75rem 2.25rem', fontSize: '0.86rem',
-              cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
-              boxShadow: `0 4px 14px ${theme.accent}44`,
-              width: isMobile ? '100%' : 'auto'
-            }}
-          >ดูทักษะที่ขาดเติมเต็ม</button>
+
+          {isLoggedIn && (
+            <button
+              onClick={() => router.push('/skills?sector=' + sector)}
+              style={{
+                background: theme.btnGapBg, color: theme.btnGapColor,
+                border: 'none', borderRadius: '999px',
+                padding: '0.75rem 2.25rem', fontSize: '0.86rem',
+                cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
+                boxShadow: `0 4px 14px ${theme.accent}44`,
+                width: isMobile ? '100%' : 'auto'
+              }}
+            >ดูทักษะที่ขาดเติมเต็ม</button>
+          )}
+
+          {!isLoggedIn && (
+            <button
+              onClick={() => router.push(`/login?redirect=/skills?sector=${sector}`)}
+              style={{
+                background: 'white', color: theme.accentText,
+                border: `1.5px solid ${theme.accent}`, borderRadius: '999px',
+                padding: '0.75rem 2.25rem', fontSize: '0.86rem',
+                cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
+                width: isMobile ? '100%' : 'auto'
+              }}
+            >🔓 เข้าสู่ระบบเพื่อดูทักษะที่ขาด</button>
+          )}
         </div>
 
       </div>
+
+      {/* ── Guest-only extras ── */}
+      {!isLoggedIn && (
+        <>
+          <LockedFeatures theme={theme} />
+          <UnlockBanner theme={theme} sector={sector} />
+        </>
+      )}
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </main>
   )
 }
