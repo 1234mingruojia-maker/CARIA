@@ -23,17 +23,16 @@ export async function POST(req: Request) {
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session  = event.data.object as Stripe.Checkout.Session
-    const meta     = session.metadata!
+    const session = event.data.object as Stripe.Checkout.Session
+    const meta    = session.metadata!
 
     const { email, password, username, gender, age, gpax, major, preferred_sector } = meta
 
-    // 1️⃣ สร้าง Supabase user ด้วย admin client (bypass email confirm ชั่วคราว)
-    //    Supabase จะส่ง OTP email ให้อัตโนมัติตาม auth config
+    // 1️⃣ สร้าง Supabase user ด้วย admin client
     const { data: newUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
-      email_confirm: false,   // ยังไม่ confirm — รอ OTP จากผู้ใช้
+      email_confirm: false, // รอ OTP ยืนยัน
     })
 
     if (signUpError || !newUser.user) {
@@ -43,16 +42,23 @@ export async function POST(req: Request) {
 
     const userId = newUser.user.id
 
-    // 2️⃣ ส่ง OTP email ให้ผู้ใช้ยืนยัน
-    const { error: otpError } = await supabaseAdmin.auth.signInWithOtp({
-  email,
-  options: {
-    shouldCreateUser: false, // user สร้างไปแล้วข้างบน ไม่ต้องสร้างซ้ำ
-  },
-})
+    // 2️⃣ ส่ง OTP ด้วย regular client (anon key)
+    const supabaseClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
 
+    const { error: otpError } = await supabaseClient.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: false },
+    })
 
-    // 3️⃣ บันทึก profile (is_paid = true ทันที เพราะจ่ายเงินแล้ว)
+    if (otpError) {
+      console.error('OTP send error:', otpError)
+      // ไม่ return 500 — user สร้างแล้ว แค่ log ไว้ให้ทราบ
+    }
+
+    // 3️⃣ บันทึก profile
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .insert({
