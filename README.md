@@ -7,7 +7,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
 
-## 📋 เกี่ยวกับโปรเจกต์
+##  เกี่ยวกับโปรเจกต์
 
 CARIA เป็นระบบแนะนำอาชีพที่พัฒนาขึ้นเพื่อช่วยนักเรียน นักศึกษา ในการเลือกเส้นทางอาชีพที่เหมาะสมกับ**สมรรถนะ (Competency)** ของตนเอง โดยเฉพาะอาชีพด้าน **Digital Technology** และ **Digital Media**
 
