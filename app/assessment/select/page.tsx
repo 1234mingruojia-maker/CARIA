@@ -22,7 +22,7 @@ export default function SelectSectorPage() {
                 fontFamily: "'Noto Sans Thai', sans-serif",
             }}
         >
-        <TabNav/>
+            <TabNav />
             {/* Content */}
             <div
                 style={{
@@ -72,7 +72,7 @@ export default function SelectSectorPage() {
 
                         <div
                             style={{
-                                fontFamily: "'Caveat', cursive",
+                                fontFamily: "'Noto Sans Thai', sans-serif",
                                 fontSize: '1.2rem',
                                 color: '#4a6fa5',
                                 textDecoration: 'underline',
@@ -99,7 +99,7 @@ export default function SelectSectorPage() {
                                 transition: 'all 0.2s ease',
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = '#2c2927'
+                                e.currentTarget.style.background = '#2e52ca'
                                 e.currentTarget.style.color = '#fff'
                             }}
                             onMouseLeave={(e) => {
@@ -138,7 +138,7 @@ export default function SelectSectorPage() {
 
                         <div
                             style={{
-                                fontFamily: "'Caveat', cursive",
+                                fontFamily: "'Noto Sans Thai', sans-serif",
                                 fontSize: '1.2rem',
                                 color: '#4a6fa5',
                                 textDecoration: 'underline',
@@ -165,7 +165,7 @@ export default function SelectSectorPage() {
                                 transition: 'all 0.2s ease',
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = '#2c2927'
+                                e.currentTarget.style.background = '#f72374'
                                 e.currentTarget.style.color = '#fff'
                             }}
                             onMouseLeave={(e) => {
