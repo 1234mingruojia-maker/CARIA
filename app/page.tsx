@@ -1,5 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import TabNav from '../components/TabNav'
 
 const STATS = [
   { value: '177K', label: 'แบบทดสอบ' },
@@ -16,59 +17,6 @@ const CAREERS = [
   { sector: 'DT', title: 'UX/UI Designer', desc: 'ออกแบบประสบการณ์ผู้ใช้และอินเทอร์เฟซ', tags: ['Figma', 'User Research', 'Prototyping', 'Design System'] },
   { sector: 'DC', title: 'Graphic / Motion Designer', desc: 'สร้างสรรค์งานภาพและ Motion Graphic สำหรับสื่อดิจิทัล', tags: ['Adobe Suite', 'After Effects', 'Branding', 'Animation'] },
 ]
-
-const NAV_TABS = [
-  { key: 'home', label: 'หน้าหลัก', path: '/' },
-  { key: 'assessment', label: 'แบบทดสอบ', path: '/assessment/select' },
-  { key: 'result', label: 'สรุปผล', path: '/result' },
-  { key: 'profile', label: 'โปรไฟล์', path: '/profile' },
-]
-
-function TabNav({ active, router }: { active: string; router: ReturnType<typeof useRouter> }) {
-  return (
-    <div style={{
-      width: '100%',
-      background: '#c9b8ae',
-      display: 'flex',
-      alignItems: 'flex-end',
-      paddingLeft: '0.75rem',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      height: 44,
-    }}>
-      {NAV_TABS.map((tab) => {
-        const isActive = active === tab.key
-        return (
-          <button
-            key={tab.key}
-            onClick={() => router.push(tab.path)}
-            style={{
-              background: '#f5f0eb',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0',
-              width: 'calc(25% - 0.5rem)',
-              fontFamily: "'Noto Sans Thai', sans-serif",
-              fontSize: '0.75rem',
-              color: '#2c2927',
-              clipPath: 'polygon(12px 0%, calc(100% - 12px) 0%, 100% 100%, 0% 100%)',
-              marginRight: '-2px',
-              opacity: isActive ? 1 : 0.6,
-              fontWeight: isActive ? 600 : 400,
-              transition: 'opacity 0.15s',
-              height: 34,
-              position: 'relative',
-              zIndex: isActive ? 2 : 1,
-            }}
-          >
-            {tab.label}
-          </button>
-        )
-      })}
-    </div>
-  )
-}
 
 export default function Home() {
   const router = useRouter()
@@ -126,21 +74,10 @@ export default function Home() {
         }
       `}</style>
 
-      <main style={{ minHeight: '100vh', background: '#f5f0eb', fontFamily: "'Noto Sans Thai', sans-serif" }}>
+      <main style={{ minHeight: '100vh', background: '#ececec', fontFamily: "'Noto Sans Thai', sans-serif" }}>
 
-        {/* Topbar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem 0.4rem' }}>
-          <div style={{ width: 24 }} />
-          <div style={{
-            background: '#2c2927', borderRadius: '999px', padding: '0.3rem 1.25rem',
-            fontFamily: "'Caveat', cursive", fontSize: '1rem', color: '#f5f0eb',
-            letterSpacing: '1px', boxShadow: '0 2px 10px rgba(44,41,39,0.2)',
-          }}>CARIA↗</div>
-          <div style={{ width: 24 }} />
-        </div>
-
-        {/* Tab Navigation */}
-        <TabNav active="home" router={router} />
+       
+        <TabNav/>
 
         <div style={{ padding: '1.5rem 1rem 4rem', maxWidth: 480, margin: '0 auto' }}>
 
