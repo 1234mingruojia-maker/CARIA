@@ -10,13 +10,43 @@ const STATS = [
 ]
 
 const CAREERS = [
-  { sector: 'DT', title: 'Software Developer / Engineer', desc: 'พัฒนาแอปพลิเคชัน เว็บไซต์ และระบบซอฟต์แวร์', tags: ['Frontend', 'Backend', 'Full-Stack', 'Mobile'] },
-  { sector: 'DC', title: 'Digital Marketing Specialist', desc: 'วางแผนและดำเนินกลยุทธ์การตลาดออนไลน์', tags: ['SEO/SEM', 'Social Media', 'Analytics', 'Content'] },
-  { sector: 'DT', title: 'Data Scientist / Data Analyst', desc: 'วิเคราะห์ข้อมูลขนาดใหญ่ สร้างโมเดล ML', tags: ['Machine Learning', 'SQL', 'Python', 'Visualization'] },
-  { sector: 'DC', title: 'Content Creator / Strategist', desc: 'สร้างและวางแผนเนื้อหาดิจิทัลที่ดึงดูดกลุ่มเป้าหมาย', tags: ['Video Production', 'Copywriting', 'Storytelling'] },
-  { sector: 'DT', title: 'UX/UI Designer', desc: 'ออกแบบประสบการณ์ผู้ใช้และอินเทอร์เฟซ', tags: ['Figma', 'User Research', 'Prototyping', 'Design System'] },
-  { sector: 'DC', title: 'Graphic / Motion Designer', desc: 'สร้างสรรค์งานภาพและ Motion Graphic สำหรับสื่อดิจิทัล', tags: ['Adobe Suite', 'After Effects', 'Branding', 'Animation'] },
+  // --- กลุ่ม DT (Digital Technology) ---
+  { id: 'DT01', sector: 'DT', title: 'Web & Application Developer', desc: 'พัฒนาและดูแลเว็บไซต์รวมถึงเว็บแอปพลิเคชันให้ทำงานได้อย่างมีประสิทธิภาพ', tags: ['Frontend', 'Backend', 'Full-Stack', 'JavaScript'] },
+  { id: 'DT02', sector: 'DT', title: 'Mobile Application Developer', desc: 'ออกแบบและเขียนโปรแกรมสำหรับแอปพลิเคชันบนสมาร์ตโฟนระบบ iOS และ Android', tags: ['iOS', 'Android', 'Flutter', 'React Native'] },
+  { id: 'DT03', sector: 'DT', title: 'Enterprise Software Professional', desc: 'พัฒนาและดูแลระบบซอฟต์แวร์ขนาดใหญ่ที่ใช้ในองค์กรและธุรกิจ', tags: ['ERP', 'Java', 'Cloud Architecture', 'DevOps'] },
+  { id: 'DT04', sector: 'DT', title: 'Data Handling Professional', desc: 'จัดการ บริหาร และจัดเก็บฐานข้อมูลขนาดใหญ่ให้ปลอดภัยและพร้อมใช้งาน', tags: ['SQL', 'Database', 'Big Data', 'Data Engineer'] },
+  { id: 'DT05', sector: 'DT', title: 'Data Science Professional', desc: 'วิเคราะห์ข้อมูลขั้นสูงและสร้างโมเดลพยากรณ์เพื่อตอบโจทย์ทางธุรกิจ', tags: ['Machine Learning', 'Python', 'AI', 'Statistics'] },
+  { id: 'DT06', sector: 'DT', title: 'Cloud Technology Professional', desc: 'ออกแบบและดูแลโครงสร้างพื้นฐานระบบคลาวด์ขององค์กร', tags: ['AWS', 'Azure', 'GCP', 'Kubernetes'] },
+
+  // --- กลุ่ม DC (Digital Content) ---
+  { id: 'DC01', sector: 'DC', title: 'Visual Designer', desc: 'ออกแบบงานกราฟิกและโครงสร้างภาพเพื่อสื่อสารอัตลักษณ์ของแบรนด์', tags: ['Graphic', 'Branding', 'Photoshop', 'Illustrator'] },
+  { id: 'DC02', sector: 'DC', title: 'Content Creator', desc: 'คิดค้นและสร้างสรรค์เนื้อหาในรูปแบบบทความ วิดีโอ หรือโพสต์บนโซเชียลมีเดีย', tags: ['Copywriting', 'Storytelling', 'Social Media', 'Creative'] },
+  { id: 'DC03', sector: 'DC', title: 'Animation Specialist', desc: 'สร้างสรรค์ภาพเคลื่อนไหว 2D และ 3D สำหรับสื่อบันเทิง ภาพยนตร์ และโฆษณา', tags: ['2D/3D Animation', 'After Effects', 'Maya', 'Blender'] },
+  { id: 'DC04', sector: 'DC', title: 'Digital Video Professional', desc: 'ถ่ายทำและตัดต่อวิดีโอรวมถึงการทำโพรดักชันสำหรับแพลตฟอร์มออนไลน์', tags: ['Video Editing', 'Premiere Pro', 'Production', 'Color Grading'] },
+  { id: 'DC05', sector: 'DC', title: 'Computer Games Professional', desc: 'ออกแบบและพัฒนาเกม คอมพิวเตอร์กราฟิกเกม หรือการเขียนโค้ดระบบเกม', tags: ['Game Design', 'Unity', 'Unreal Engine', 'C#'] },
+  { id: 'DC06', sector: 'DC', title: 'Digital Media Planning Professional', desc: 'วางแผน สื่อสาร และยิงโฆษณาออนไลน์บนแพลตฟอร์มดิจิทัลให้ตรงกลุ่มเป้าหมาย', tags: ['Media Planning', 'Facebook Ads', 'Google Ads', 'ROI'] },
+  { id: 'DC07', sector: 'DC', title: 'Real-time Content & Live Specialist', desc: 'จัดการและสร้างสรรค์เนื้อหาประเภทถ่ายทอดสดหรือกิจกรรมออนไลน์แบบทันท่วงที', tags: ['Live Streaming', 'OBS', 'Engagement', 'Real-time Marketing'] },
+  { id: 'DC08', sector: 'DC', title: 'Mobile Application Content & UI Specialist', desc: 'ออกแบบประสบการณ์และเนื้อหาที่เหมาะสมสำหรับผู้ใช้งานบนโมบายแอปพลิเคชัน', tags: ['UX/UI', 'Figma', 'User Research', 'Wireframing'] },
+  { id: 'DC09', sector: 'DC', title: 'Digital Media Research Professional', desc: 'วิเคราะห์พฤติกรรมผู้บริโภคและวิจัยแนวโน้มของสื่อดิจิทัลเพื่อนำมาวางกลยุทธ์', tags: ['Market Research', 'Data Analytics', 'Consumer Insight', 'SEO/SEM'] },
 ]
+
+const CAREER_PIC: Record<string, string> = {
+  'DT01': '/DT/Web-Application.png',
+  'DT02': '/DT/mobile-application.png',
+  'DT03': '/DT/Enterprise-Software-Professionals.png',
+  'DT04': '/DT/Data-Handling-Professionals.png',
+  'DT05': '/DT/Data-Science-Professionals.png',
+  'DT06': '/DT/Cloud-Technology-Professionals.png',
+  'DC01': '/DC/Visual.png',
+  'DC02': '/DC/Content.png',
+  'DC03': '/DC/Animation.png',
+  'DC04': '/DC/Digital-Video-Professionals.png',
+  'DC05': '/DC/Computer-Games-Professional.png',
+  'DC06': '/DC/Digital-Media-Planning-Professionals.png',
+  'DC07': '/DC/Real-time.png',
+  'DC08': '/DC/Mobile-Application-Professionals.png',
+  'DC09': '/DC/Digital-Media-Research-Professionals.png',
+}
 
 export default function Home() {
   const router = useRouter()
@@ -24,7 +54,7 @@ export default function Home() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght=500;700&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap');
 
         .hero-img-box {
           transition: transform 0.22s ease, box-shadow 0.22s ease;
@@ -76,18 +106,47 @@ export default function Home() {
 
       <main style={{ minHeight: '100vh', background: '#ececec', fontFamily: "'Noto Sans Thai', sans-serif" }}>
 
-       
-        <TabNav/>
+        <TabNav />
 
         <div style={{ padding: '1.5rem 1rem 4rem', maxWidth: 480, margin: '0 auto' }}>
 
-          {/* Hero — 2 placeholder boxes */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
-            <div className="hero-img-box" style={{ height: 120, background: '#d3d3d3', borderRadius: '8px', overflow: 'hidden' }}>
-              {/* ใส่รูป DT ภายหลัง */}
-            </div>
-            <div className="hero-img-box" style={{ height: 120, background: '#d3d3d3', borderRadius: '8px', overflow: 'hidden' }}>
-              {/* ใส่รูป DC ภายหลัง */}
+          {/* Hero — แบ่งเป็น 2 ฝั่ง: ฝั่งซ้ายคือโลโก้ ฝั่งขวาคือคำอธิบายเว็บ */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>
+            {/* ฝั่งซ้าย: โลโก้ WhatJob */}
+            
+              <img
+                src="/pic/WhatJob.png"
+                alt="WhatJob Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+    
+
+            {/* ฝั่งขวา: กล่องคำอธิบายเกี่ยวกับเว็บไซต์ */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '0.85rem 1rem',
+              borderRadius: '12px',
+              height: 120,
+              boxShadow: '0 4px 12px rgba(44,41,39,0.05)',
+              border: '1px solid #5a5550',
+              boxSizing: 'border-box'
+            }}>
+              
+              <p style={{
+                fontSize: '0.85rem',
+                color: '#5a5550',
+                margin: 0,
+                lineHeight: 1.5,
+                fontWeight: 500
+              }}>
+                เว็บไซค์ทำแบบทดสอบเพื่อค้นหาอาชีพที่ใช่และเหมาะสมที่สุดตามทักษะและความสามารถของคุณ
+              </p>
             </div>
           </div>
 
@@ -151,6 +210,8 @@ export default function Home() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               {CAREERS.map((c, i) => {
                 const isDT = c.sector === 'DT'
+                const imgUrl = CAREER_PIC[c.id] || '/placeholder.png'
+
                 return (
                   <div key={i} className="career-card" style={{
                     background: isDT ? '#a8b8d8' : '#e8b4c0',
@@ -161,21 +222,32 @@ export default function Home() {
                     gap: '0.5rem',
                     border: isDT ? '0.5px solid #8aaace' : '0.5px solid #d898a8',
                   }}>
+                    {/* กล่องครอบรูปภาพ */}
                     <div style={{
-                      width: '100%', height: 90,
-                      background: 'rgba(255,255,255,0.3)',
+                      width: '100%',
+                      height: 100,
+                      background: 'rgba(255,255,255,0.4)',
                       borderRadius: '8px',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '4px'
                     }}>
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" opacity={0.4}>
-                        <rect x="3" y="3" width="18" height="18" rx="3" stroke={isDT ? '#1e3a6e' : '#7a1e3a'} strokeWidth="1.5" />
-                        <circle cx="8.5" cy="8.5" r="1.5" fill={isDT ? '#1e3a6e' : '#7a1e3a'} />
-                        <path d="M3 16l5-5 4 4 3-3 6 6" stroke={isDT ? '#1e3a6e' : '#7a1e3a'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      <img
+                        src={imgUrl}
+                        alt={c.title}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain'
+                        }}
+                      />
                     </div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: isDT ? '#1e3a6e' : '#7a1e3a', lineHeight: 1.3 }}>{c.title}</div>
-                    <div style={{ fontSize: '0.65rem', color: isDT ? '#2c4070' : '#5a1a30', lineHeight: 1.55 }}>{c.desc}</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: isDT ? '#1e3a6e' : '#7a1e3a', lineHeight: 1.3, minHeight: '2rem', display: 'flex', alignItems: 'center' }}>{c.title}</div>
+                    <div style={{ fontSize: '0.65rem', color: isDT ? '#2c4070' : '#5a1a30', lineHeight: 1.55, flexGrow: 1 }}>{c.desc}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3, marginTop: 'auto' }}>
                       {c.tags.slice(0, 3).map(t => (
                         <span key={t} style={{
                           fontSize: '0.55rem',
