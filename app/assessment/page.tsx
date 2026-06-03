@@ -2,14 +2,15 @@
 import { useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { QUESTIONS } from '@/lib/questionMap'
+import TabNav from '../../components/TabNav'
 
 const PER_PAGE = 5
 
 // กลุ่มคำถามตาม type เพื่อแสดง section header
 const TYPE_LABELS: Record<string, { th: string; en: string; color: string }> = {
-  skill:     { th: 'ทักษะ',    en: 'Skills',     color: '#c8a882' },
-  attitude:  { th: 'บุคลิกภาพ', en: 'Attitude',   color: '#a89070' },
-  knowledge: { th: 'ความรู้',   en: 'Knowledge',  color: '#8a7f78' },
+  skill:     { th: '',    en: 'Skills',     color: '#c8a882' },
+  attitude:  { th: '', en: 'Attitude',   color: '#a89070' },
+  knowledge: { th: '',   en: 'Knowledge',  color: '#8a7f78' },
 }
 
 function AssessmentContent() {
@@ -93,11 +94,11 @@ function AssessmentContent() {
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body { background: #f5f0eb; }
+        body { background: #ececec; }
 
         .ca-page {
           min-height: 100vh;
-          background: #f5f0eb;
+          background: #ececec;
           padding: 1.5rem 1rem 7rem;
           font-family: 'Noto Sans Thai', sans-serif;
         }
@@ -229,8 +230,8 @@ function AssessmentContent() {
         }
 
         .ca-q-text {
-          font-size: 0.95rem;
-          line-height: 1.7;
+            font-size: 1.2rem;
+  line-height: 1.5;
           color: #2c2927;
           font-weight: 400;
         }
@@ -397,17 +398,181 @@ function AssessmentContent() {
           border-radius: 8px;
           padding: 0.5rem 1rem;
         }
+          /* ===== WHATJOB STYLE ===== */
+
+.ca-page{
+  background:#ececec;
+  padding:0 0 120px;
+}
+
+.ca-topbar{
+  display:none;
+}
+
+.ca-title-wrap{
+  text-align:center;
+  margin-top:10px;
+  margin-bottom:10px;
+}
+
+.ca-title{
+  font-size:3rem;
+  font-weight:700;
+  color:#000;
+}
+
+.ca-progress-wrap{
+  max-width:950px;
+  margin:20px auto 8px;
+  color:#111;
+  font-size:1.8rem;
+  font-family:'Noto Sans Thai',sans-serif;
+}
+
+.ca-progress-bar{
+  max-width:950px;
+  margin:0 auto 25px;
+  height:20px;
+  border-radius:20px;
+  background:#cfcfcf;
+}
+
+.ca-progress-fill{
+  background:#b5cb7a;
+}
+
+.ca-section-header{
+  max-width:950px;
+  margin:0 auto 40px;
+}
+
+.ca-section-dot{
+  width:28px;
+  height:28px;
+  background:#d0d0d0 !important;
+}
+
+.ca-section-label{
+  font-size:2rem;
+  font-weight:700;
+  color:#000;
+  letter-spacing:0;
+}
+
+.ca-section-line{
+  display:none;
+}
+
+.ca-questions{
+  max-width:950px;
+  gap:65px;
+}
+
+.ca-card{
+  background:transparent;
+  box-shadow:none;
+  border-radius:0;
+  padding:0;
+}
+
+.ca-card:focus-within{
+  box-shadow:none;
+}
+
+.ca-q-meta{
+  display:none;
+}
+
+.ca-q-text{
+  text-align:center;
+  font-size:2rem;
+  color:#111;
+}
+
+.ca-score-row{
+  margin-top:10px;
+}
+
+.ca-score-num{
+  font-size:3rem;
+  color:#111;
+}
+
+.ca-score-max{
+  font-size:1rem;
+}
+
+.ca-score-label{
+  background:#d0d0d0;
+  color:#111;
+}
+
+.ca-slider{
+  height:12px;
+  border-radius:20px;
+}
+
+.ca-slider::-webkit-slider-thumb{
+  width:22px;
+  height:22px;
+  background:#000;
+  border:none;
+  box-shadow:none;
+}
+
+.ca-slider::-moz-range-thumb{
+  width:22px;
+  height:22px;
+  background:#000;
+  border:none;
+  box-shadow:none;
+}
+
+.ca-nav{
+  background:transparent;
+  border:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+
+.ca-page-label{
+  display:none;
+}
+
+.ca-btn-circle{
+  width:100px;
+  height:70px;
+  border:none;
+  border-radius:24px;
+  background:#e5d24f;
+  color:#555;
+  font-size: 52px;
+  box-shadow:0 4px 8px rgba(0,0,0,.15);
+}
+
+.ca-btn-circle:not(:disabled):hover{
+  background:#e5d24f;
+  color:#555;
+}
+
+.ca-btn-submit{
+  background:#e5d24f;
+  color:#333;
+  border-radius:20px;
+  font-weight:700;
+}
       `}</style>
 
       <main className="ca-page">
+<TabNav />
 
-        {/* Topbar */}
-        <div className="ca-topbar">
-          <span className="ca-logo">CARIA</span>
-          <span className="ca-sector-badge">
-            {sector === 'DT' ? 'Digital Technology' : 'Digital Communication'}
-          </span>
-        </div>
+<div className="ca-title-wrap">
+  <h1 className="ca-title">
+    {sector === 'DT'
+      ? 'Digital Technology'
+      : 'Digital Communication'}
+  </h1>
+</div>
 
         {/* Progress */}
         <div className="ca-progress-wrap">

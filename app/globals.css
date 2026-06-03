@@ -1,22 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg: #f5f0eb;
+  --bg: #ececec;
   --dark: #2c2927;
   --mid: #8a7f78;
   --light: #e8e3de;
   --accent-dt: #3a5ca8;
   --accent-dc: #0f6e56;
   --card: #ffffff;
-  --font-hand: 'Caveat', cursive;
-  --font-body: 'Noto Sans Thai', sans-serif;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#__next {
+  background-color: #ececec;
+  min-height: 100vh;
+}
 
 body {
-  background: var(--bg);
-  font-family: var(--font-body);
+  font-family: 'Montserrat', 'Noto Sans Thai', sans-serif;
   color: var(--dark);
-  min-height: 100vh;
 }

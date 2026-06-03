@@ -5,6 +5,10 @@ import { createClient } from "@supabase/supabase-js";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import TabNav from '../../components/TabNav'
+import html2canvas from "html2canvas";
+
+
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -332,53 +336,57 @@ function CurrentLevelPanel({ centerNode, theme }: { centerNode: SkillGapNode; th
 }
 
 // ─── PDF ────────────────────────────────────────────────────────────────────────
-async function generatePDF(data: {
-  nodes: SkillGapNode[]; courses: Course[]; jobs: JobListing[];
-  institutions: Institution[]; careerName: string; competencyId: string;
-}) {
+async function generatePDF(element: HTMLElement) {
   const { jsPDF } = await import("jspdf");
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const W = 210, margin = 16; let y = 0;
-  const addBg = (c: string) => { doc.setFillColor(c); doc.rect(0, 0, W, 297, "F"); };
-  const text = (str: string, x: number, yp: number, o?: { size?: number; bold?: boolean; color?: string; align?: "left" | "center" | "right" }) => {
-    doc.setFontSize(o?.size ?? 10); doc.setFont("helvetica", o?.bold ? "bold" : "normal");
-    doc.setTextColor(o?.color ?? "#2c2927"); doc.text(str, x, yp, { align: o?.align ?? "left" });
-  };
-  const hr = (yp: number) => { doc.setDrawColor("#e8e3de"); doc.setLineWidth(0.3); doc.line(margin, yp, W - margin, yp); };
-  addBg("#2c2927");
-  text("CARIA+", margin, 36, { size: 28, bold: true, color: "#FFFFFF" });
-  text("Career AI Readiness & Intelligence Advisor", margin, 44, { size: 11, color: "#D4A96A" });
-  text("Skill Gap Analysis Report", W / 2, 90, { size: 20, bold: true, color: "#f5f0eb", align: "center" });
-  text(data.careerName, W / 2, 106, { size: 14, color: "#D4A96A", align: "center" });
-  text(`Generated: ${new Date().toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })}`, W / 2, 120, { size: 8, color: "#8a7f78", align: "center" });
-  doc.addPage(); addBg("#FAFAF8");
-  y = 30; text("ทักษะที่ควรพัฒนา", margin, y, { size: 14, bold: true }); y += 8; hr(y); y += 8;
-  data.nodes.filter((n) => !n.is_center).forEach((node) => {
-    const col = nodeColors(node.gap_percentage, false, THEMES.DT);
-    doc.setFillColor(col.bg); doc.roundedRect(margin, y, W - margin * 2, 18, 2, 2, "F");
-    doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(col.text);
-    doc.text(`${node.name} — ${node.gap_percentage}%`, margin + 6, y + 11);
-    y += 22;
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    backgroundColor: "#ffffff",
   });
-  y += 8; text("คอร์สแนะนำ", margin, y, { size: 12, bold: true }); y += 8; hr(y); y += 8;
-  data.courses.forEach((c) => {
-    if (y > 255) { doc.addPage(); addBg("#FAFAF8"); y = 30; }
-    doc.setFillColor("#ffffff"); doc.setDrawColor("#e8e3de"); doc.setLineWidth(0.4);
-    doc.roundedRect(margin, y, W - margin * 2, 24, 2, 2, "FD");
-    doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor("#2c2927");
-    doc.text(c.title, margin + 6, y + 9);
-    doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor("#8a7f78");
-    doc.text(`${c.level} · ${c.hours}h · ★${c.rating}`, margin + 6, y + 17);
-    y += 28;
-  });
-  doc.save(`CARIA_SkillGap_${data.competencyId}_${Date.now()}.pdf`);
+
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  const pdfWidth = 210;
+  const pdfHeight = 297;
+
+  const imgWidth = pdfWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+
+  heightLeft -= pdfHeight;
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+
+    pdf.addPage();
+    pdf.addImage(
+      imgData,
+      "PNG",
+      0,
+      position,
+      imgWidth,
+      imgHeight
+    );
+
+    heightLeft -= pdfHeight;
+  }
+
+  pdf.save("CARIA_Report.pdf");
 }
 
 // ─── Inner Page ─────────────────────────────────────────────────────────────────
 function SkillsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
+const pdfRef = useRef<HTMLDivElement>(null);
   const [competencyId, setCompetencyId] = useState<string>("");
   const [careerName, setCareerName] = useState<string>("");
   const [sector, setSector] = useState<string>("DT");
@@ -493,7 +501,7 @@ function SkillsPageInner() {
   const card = { background: "white", border: "1px solid #ede8e2", borderRadius: 14 } as const;
 
   if (loading || !competencyId) return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f0eb" }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#ececec" }}>
       <div style={{ textAlign: "center" }}>
         <div style={{ width: 36, height: 36, border: `3px solid #d0d5e8`, borderTopColor: theme.accent, borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 12px" }} />
         <p style={{ color: "#5a6480", fontSize: 14, fontFamily: "'Noto Sans Thai', sans-serif" }}>กำลังโหลดข้อมูล...</p>
@@ -503,8 +511,14 @@ function SkillsPageInner() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f0eb", fontFamily: "'Noto Sans Thai', 'Sarabun', sans-serif" }}>
-
+<div
+  ref={pdfRef}
+  style={{
+    minHeight: "100vh",
+    background: "#ececec",
+    fontFamily: "'Noto Sans Thai', 'Sarabun', sans-serif",
+  }}
+>
       <TabNav />
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 20px 48px", display: "flex", flexDirection: "column", gap: 32 }}>
@@ -565,7 +579,7 @@ function SkillsPageInner() {
         {/* ══ SECTION 2: Skill Gap Map ══ */}
         <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 18, alignItems: "start" }}>
           <div style={{ ...card, padding: "16px 16px 8px" }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1a2e", margin: "0 0 6px" }}>แผนที่ทักษะ</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1a2e", margin: "0 0 6px" }}>ทักษะที่ควรพัฒนา</p>
             <div style={{ height: 420 }}>
               {nodes.length > 0 ? (
                 <SkillGapMap nodes={nodes} selectedId={selectedNode?.id ?? null} onSelect={setSelectedNode} theme={theme} />
@@ -881,12 +895,20 @@ function SkillsPageInner() {
         {/* ── PDF Button ── */}
         <div style={{ display: "flex", justifyContent: "flex-end", paddingBottom: 8 }}>
           <button
-            onClick={async () => {
-              setPdfLoading(true);
-              try { await generatePDF({ nodes, courses, jobs, institutions, careerName, competencyId }); }
-              catch { alert("ไม่สามารถสร้าง PDF ได้"); }
-              finally { setPdfLoading(false); }
-            }}
+           onClick={async () => {
+  setPdfLoading(true);
+
+  try {
+    if (pdfRef.current) {
+      await generatePDF(pdfRef.current);
+    }
+  } catch (e) {
+    console.error(e);
+    alert("ไม่สามารถสร้าง PDF ได้");
+  } finally {
+    setPdfLoading(false);
+  }
+}}
             disabled={pdfLoading}
             style={{
               display: "flex", alignItems: "center", gap: 8,
