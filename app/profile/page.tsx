@@ -367,7 +367,7 @@ export default function ProfilePage() {
                 สมาชิกตั้งแต่ {new Date(profile!.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
 
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.75rem', gap: '0.75rem' }}>
+             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.75rem', gap: '0.75rem' }}>
                 {editing ? (
                   <>
                     <button
@@ -384,12 +384,20 @@ export default function ProfilePage() {
                     >{saving ? 'กำลังบันทึก...' : 'บันทึก'}</button>
                   </>
                 ) : (
-                  <button
-                    onClick={handleEdit}
-                    style={{ background: '#2c2927', border: '1.5px solid #2c2927', borderRadius: '999px', padding: '0.55rem 2.75rem', fontSize: '0.9rem', cursor: 'pointer', color: '#f5f0eb', fontFamily: "'Noto Sans Thai', sans-serif", transition: 'opacity 0.15s' }}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-                    onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-                  >แก้ไข</button>
+                  <>
+                    <button
+                      onClick={handleEdit}
+                      style={{ background: '#2c2927', border: '1.5px solid #2c2927', borderRadius: '999px', padding: '0.55rem 2.75rem', fontSize: '0.9rem', cursor: 'pointer', color: '#f5f0eb', fontFamily: "'Noto Sans Thai', sans-serif" }}
+                      onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                    >แก้ไข</button>
+                    <button
+                      onClick={async () => { await signOut(); router.push('/login') }}
+                      style={{ background: 'transparent', border: '1.5px solid #c0392b', borderRadius: '999px', padding: '0.55rem 1.75rem', fontSize: '0.9rem', cursor: 'pointer', color: '#c0392b', fontFamily: "'Noto Sans Thai', sans-serif" }}
+                      onMouseEnter={e => (e.currentTarget.style.opacity = '0.7')}
+                      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                    >ออกจากระบบ</button>
+                  </>
                 )}
               </div>
             </>
