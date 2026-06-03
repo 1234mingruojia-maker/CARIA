@@ -113,17 +113,17 @@ export default function Home() {
           {/* Hero — แบ่งเป็น 2 ฝั่ง: ฝั่งซ้ายคือโลโก้ ฝั่งขวาคือคำอธิบายเว็บ */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>
             {/* ฝั่งซ้าย: โลโก้ WhatJob */}
-            
-              <img
-                src="/pic/WhatJob.png"
-                alt="WhatJob Logo"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-    
+
+            <img
+              src="/pic/WhatJob.png"
+              alt="WhatJob Logo"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+
 
             {/* ฝั่งขวา: กล่องคำอธิบายเกี่ยวกับเว็บไซต์ */}
             <div style={{
@@ -137,7 +137,7 @@ export default function Home() {
               border: '1px solid #5a5550',
               boxSizing: 'border-box'
             }}>
-              
+
               <p style={{
                 fontSize: '0.85rem',
                 color: '#5a5550',
@@ -191,7 +191,7 @@ export default function Home() {
                   flex: 1,
                   boxShadow: '0 2px 6px rgba(44,41,39,0.1)',
                 }}>
-                  <div style={{ fontFamily: "'Caveat', cursive", fontSize: '1.15rem', fontWeight: 700, color: '#2c2927', lineHeight: 1 }}>{s.value}</div>
+                  <div style={{ fontFamily: "'Noto Sans Thai', sans-serif", fontSize: '1rem', fontWeight: 700, color: '#2c2927', lineHeight: 1 }}>{s.value}</div>
                   <div style={{ fontSize: '0.58rem', color: '#5a4535', lineHeight: 1.45, textAlign: 'center', whiteSpace: 'pre-line' }}>{s.label}</div>
                 </div>
               </div>
@@ -201,11 +201,11 @@ export default function Home() {
           {/* Careers Grid */}
           <div>
             <h2 style={{
-              fontFamily: "'Caveat', cursive",
+              fontFamily: "'Noto Sans Thai', sans-serif",
               fontSize: '1.25rem',
               color: '#2c2927',
               marginBottom: '1rem',
-            }}>ประเภทอาชีพ</h2>
+            }}>ประเภทของอาชีพ</h2>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               {CAREERS.map((c, i) => {
