@@ -1,12 +1,16 @@
-import { defineConfig } from 'vitest/config';
-import { loadEnv } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths'; // 1. import เพิ่มเข้ามา
+import { defineConfig } from 'vitest/config'
+import { config } from 'dotenv'
+import { resolve } from 'path'
+
+config({ path: resolve(process.cwd(), '.env.local') })
 
 export default defineConfig({
-  plugins: [tsconfigPaths()], // 2. ใส่ในบล็อก plugins แบบนี้
   test: {
-    include: ['src/tests/**/*.live.test.ts'],
-    exclude: ['**/node_modules/**', '**/.git/**'],
-    env: loadEnv('live', process.cwd(), ''), 
+    globals: true,
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ?? '',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+    },
   },
-});
+})

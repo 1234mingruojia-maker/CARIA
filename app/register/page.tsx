@@ -1,9 +1,10 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { validateEmail, validatePassword, passwordStrength, signUp, saveProfile } from '@/lib/auth'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { validateEmail, validatePassword, passwordStrength } from '@/lib/auth'
 import { supabase } from '@/lib/supabase'
 
+// ─── styles & helpers (เหมือนเดิม) ───────────────────────────────────────────
 const inputStyle = {
   width: '100%',
   padding: '0.65rem 1rem',
@@ -15,7 +16,6 @@ const inputStyle = {
   outline: 'none',
   color: '#2c2927',
 }
-
 const strengthColors = ['#e0dbd6', '#e05c5c', '#e09c3c', '#8ab8e0', '#4caf50']
 const strengthLabels = ['', 'อ่อนมาก', 'อ่อน', 'ปานกลาง', 'แข็งแกร่ง', 'แข็งแกร่งมาก']
 
@@ -34,31 +34,38 @@ function EyeIcon({ open }: { open: boolean }) {
   )
 }
 
-export default function RegisterPage() {
+// ─── Main component (ต้อง wrap ด้วย Suspense เพราะใช้ useSearchParams) ───────
+function RegisterInner() {
   const router = useRouter()
-  const [step, setStep] = useState<'account' | 'profile' | 'otp'>('account')
+  const searchParams = useSearchParams()
+
+  // ถ้า Stripe redirect กลับมาพร้อม ?step=otp&email=xxx ให้ข้ามตรงมาที่ OTP ทันที
+  const initialStep = searchParams.get('step') === 'otp' ? 'otp' : 'account'
+  const initialEmail = searchParams.get('email') ?? ''
+
+  const [step, setStep] = useState<'account' | 'profile' | 'otp'>(initialStep)
 
   // Step 1
-  const [email, setEmail] = useState('')
+  const [email, setEmail]     = useState(initialEmail)
   const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
-  const [showPw, setShowPw] = useState(false)
-  const [agreed, setAgreed] = useState(false)
+  const [confirm, setConfirm]   = useState('')
+  const [showPw, setShowPw]     = useState(false)
+  const [agreed, setAgreed]     = useState(false)
 
   // Step 2
   const [username, setUsername] = useState('')
-  const [gender, setGender] = useState('')
-  const [age, setAge] = useState('')
-  const [gpax, setGpax] = useState('')
-  const [major, setMajor] = useState('')
-  const [sector, setSector] = useState('')
-  const [careers, setCareers] = useState<{ id: string; name: string; sector: string }[]>([])
+  const [gender, setGender]     = useState('')
+  const [age, setAge]           = useState('')
+  const [gpax, setGpax]         = useState('')
+  const [major, setMajor]       = useState('')
+  const [sector, setSector]     = useState('')
+  const [careers, setCareers]   = useState<{ id: string; name: string; sector: string }[]>([])
 
   // OTP
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const [otp, setOtp]         = useState(['', '', '', '', '', ''])
   const [otpError, setOtpError] = useState('')
 
-  const [error, setError] = useState('')
+  const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
 
   const pwStrength = passwordStrength(password)
@@ -71,7 +78,8 @@ export default function RegisterPage() {
       .then(({ data }) => { if (data) setCareers(data) })
   }, [])
 
-  async function handleStep1() {
+  // ── Step 1: validate แล้วไป Step 2 ──────────────────────────────────────────
+  function handleStep1() {
     setError('')
     const emailErr = validateEmail(email)
     if (emailErr) return setError(emailErr)
@@ -82,18 +90,44 @@ export default function RegisterPage() {
     setStep('profile')
   }
 
+  // ── Step 2: ส่งข้อมูลไป checkout API แล้ววิ่งไป Stripe ──────────────────────
   async function handleStep2() {
     setError('')
     if (!username || !gender || !age || !gpax || !major || !sector) {
       return setError('กรุณากรอกข้อมูลให้ครบ')
     }
     setLoading(true)
-    const { error: signUpError } = await signUp(email, password, username)
-    setLoading(false)
-    if (signUpError) return setError(signUpError.message)
-    setStep('otp')
+
+    try {
+      const selectedCareer = careers.find(c => c.id === sector)
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password,   // ฝากไปใน Stripe metadata (encrypted transit) — webhook จะเอาไป signUp
+          username,
+          gender,
+          age: Number(age),
+          gpax: Number(gpax),
+          major,
+          preferred_sector: selectedCareer?.sector ?? sector,
+        }),
+      })
+
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.error || 'เกิดข้อผิดพลาด')
+      if (result.url) {
+        window.location.href = result.url   // → Stripe Checkout
+      }
+    } catch (err: any) {
+      setError(err.message || 'ระบบขัดข้อง กรุณาลองใหม่')
+      setLoading(false)
+    }
   }
 
+  // ── Step 3 (OTP): verify แล้ว redirect เข้าแอป ──────────────────────────────
   async function handleOtp() {
     const token = otp.join('')
     if (token.length < 6) return setOtpError('กรุณากรอก OTP ให้ครบ 6 หลัก')
@@ -101,55 +135,44 @@ export default function RegisterPage() {
     setOtpError('')
 
     const { verifyOtp } = await import('@/lib/auth')
-    const { data, error: otpError } = await verifyOtp(email, token)
+    const { data, error: otpErr } = await verifyOtp(email, token)
 
-    if (otpError || !data.user) {
+    if (otpErr || !data.user) {
       setLoading(false)
       return setOtpError('OTP ไม่ถูกต้องหรือหมดอายุ')
     }
 
-    const selectedCareer = careers.find(c => c.id === sector)
-
-    await saveProfile(data.user.id, {
-      username,
-      gender,
-      age: Number(age),
-      gpax: Number(gpax),
-      major,
-      preferred_sector: selectedCareer?.sector ?? sector,
-    })
-
-    setLoading(false)
-    router.push('/')
+    // ✅ ผ่านหมดแล้ว — เข้า dashboard
+    router.push('/dashboard')
   }
 
   function handleOtpInput(val: string, idx: number) {
     const newOtp = [...otp]
     newOtp[idx] = val.slice(-1)
     setOtp(newOtp)
-    if (val && idx < 5) {
-      document.getElementById(`otp-${idx + 1}`)?.focus()
-    }
+    if (val && idx < 5) document.getElementById(`otp-${idx + 1}`)?.focus()
   }
 
+  // ─── UI ─────────────────────────────────────────────────────────────────────
   return (
     <main style={{ minHeight: '100vh', background: '#f5f0eb', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'Noto Sans Thai', sans-serif" }}>
       <style>{`
         input[type="password"]::-ms-reveal,
-        input[type="password"]::-ms-clear,
-        input::-webkit-credentials-auto-fill-button,
-        input::-webkit-strong-password-auto-fill-button {
-          display: none !important;
-        }
+        input[type="password"]::-ms-clear { display: none !important; }
       `}</style>
 
-      <div style={{ position: 'fixed', top: '1rem', left: '50%', transform: 'translateX(-50%)', background: '#2c2927', borderRadius: '999px', padding: '0.4rem 1.5rem', fontFamily: "'Caveat', cursive", fontSize: '1rem', color: '#f5f0eb', zIndex: 10 }}>CARIA↗</div>
+      {/* Logo */}
+      <div style={{ position: 'fixed', top: '1rem', left: '50%', transform: 'translateX(-50%)', background: '#2c2927', borderRadius: '999px', padding: '0.4rem 1.5rem', fontFamily: "'Caveat', cursive", fontSize: '1rem', color: '#f5f0eb', zIndex: 10 }}>
+        CARIA↗
+      </div>
 
-      {/* STEP 1 — Account */}
+      {/* ── STEP 1: Account ── */}
       {step === 'account' && (
         <div style={{ background: '#faf7f4', borderRadius: '20px', padding: '2rem', width: '100%', maxWidth: 400, boxShadow: '0 4px 20px rgba(44,41,39,0.08)' }}>
           <h1 style={{ fontFamily: "'Caveat', cursive", fontSize: '2rem', textAlign: 'center', marginBottom: '0.25rem', color: '#2c2927' }}>Register</h1>
-          <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#3a5ca8', marginBottom: '1.5rem', cursor: 'pointer' }} onClick={() => router.push('/login')}>+ มีบัญชีอยู่แล้ว?</p>
+          <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#3a5ca8', marginBottom: '1.5rem', cursor: 'pointer' }} onClick={() => router.push('/login')}>
+            + มีบัญชีอยู่แล้ว?
+          </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <input style={inputStyle} placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} type="email"/>
@@ -168,7 +191,6 @@ export default function RegisterPage() {
               </button>
             </div>
 
-            {/* Password strength */}
             {password && (
               <div>
                 <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
@@ -180,14 +202,13 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {/* Password rules */}
             <div style={{ background: '#f0ebe6', borderRadius: 10, padding: '0.75rem 1rem', fontSize: '0.72rem', color: '#5f5e5a', lineHeight: 1.8 }}>
               <p style={{ fontWeight: 500, marginBottom: 4 }}>รหัสผ่านต้องประกอบด้วย</p>
               {[
                 { rule: /^.{12,16}$/, label: '12–16 ตัวอักษร' },
-                { rule: /[A-Z]/, label: 'ตัวพิมพ์ใหญ่ (A-Z)' },
-                { rule: /[a-z]/, label: 'ตัวพิมพ์เล็ก (a-z)' },
-                { rule: /[0-9]/, label: 'ตัวเลข (0-9)' },
+                { rule: /[A-Z]/,      label: 'ตัวพิมพ์ใหญ่ (A-Z)' },
+                { rule: /[a-z]/,      label: 'ตัวพิมพ์เล็ก (a-z)' },
+                { rule: /[0-9]/,      label: 'ตัวเลข (0-9)' },
                 { rule: /[!@#$%^&*]/, label: 'สัญลักษณ์พิเศษ (!@#$%^&*)' },
               ].map(({ rule, label }) => (
                 <div key={label} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
@@ -213,12 +234,14 @@ export default function RegisterPage() {
 
             {error && <p style={{ color: '#e05c5c', fontSize: '0.8rem', textAlign: 'center' }}>{error}</p>}
 
-            <button onClick={handleStep1} style={{ background: '#2c2927', color: '#f5f0eb', border: 'none', borderRadius: '999px', padding: '0.65rem', fontSize: '0.95rem', cursor: 'pointer', fontFamily: "'Caveat', cursive", marginTop: '0.5rem' }}>Next</button>
+            <button onClick={handleStep1} style={{ background: '#2c2927', color: '#f5f0eb', border: 'none', borderRadius: '999px', padding: '0.65rem', fontSize: '0.95rem', cursor: 'pointer', fontFamily: "'Caveat', cursive", marginTop: '0.5rem' }}>
+              Next
+            </button>
           </div>
         </div>
       )}
 
-      {/* STEP 2 — Profile */}
+      {/* ── STEP 2: Profile ── */}
       {step === 'profile' && (
         <div style={{ background: '#faf7f4', borderRadius: '20px', padding: '2rem', width: '100%', maxWidth: 400, boxShadow: '0 4px 20px rgba(44,41,39,0.08)' }}>
           <h1 style={{ fontFamily: "'Caveat', cursive", fontSize: '2rem', textAlign: 'center', marginBottom: '1.5rem', color: '#2c2927' }}>Register</h1>
@@ -256,18 +279,18 @@ export default function RegisterPage() {
             {error && <p style={{ color: '#e05c5c', fontSize: '0.8rem', textAlign: 'center' }}>{error}</p>}
 
             <button onClick={handleStep2} disabled={loading} style={{ background: '#2c2927', color: '#f5f0eb', border: 'none', borderRadius: '999px', padding: '0.65rem', cursor: loading ? 'default' : 'pointer', fontFamily: "'Caveat', cursive", fontSize: '1.1rem', opacity: loading ? 0.6 : 1, marginTop: '0.5rem' }}>
-              {loading ? 'กำลังส่ง OTP...' : 'Next'}
+              {loading ? 'กำลังเปิดหน้าชำระเงิน...' : 'Next → ชำระเงิน'}
             </button>
           </div>
         </div>
       )}
 
-      {/* STEP 3 — OTP */}
+      {/* ── STEP 3: OTP (หลังกลับจาก Stripe) ── */}
       {step === 'otp' && (
         <div style={{ background: '#c4a99a', borderRadius: '20px', padding: '2rem', width: '100%', maxWidth: 360, boxShadow: '0 4px 20px rgba(44,41,39,0.15)', textAlign: 'center' }}>
           <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: '1.6rem', color: '#2c2927', marginBottom: '0.5rem' }}>OTP Verification</h2>
           <p style={{ fontSize: '0.8rem', color: '#5f3e30', marginBottom: '0.25rem' }}>Enter one-time password</p>
-          <p style={{ fontSize: '0.75rem', color: '#5f3e30', marginBottom: '0.25rem' }}>a one-time password has been send to</p>
+          <p style={{ fontSize: '0.75rem', color: '#5f3e30', marginBottom: '0.25rem' }}>a one-time password has been sent to</p>
           <p style={{ fontSize: '0.8rem', color: '#2c2927', fontWeight: 500, marginBottom: '0.25rem' }}>{email}</p>
           <p style={{ fontSize: '0.72rem', color: '#5f3e30', marginBottom: '1.5rem' }}>หมดอายุใน 10 นาที</p>
 
@@ -279,9 +302,7 @@ export default function RegisterPage() {
                 value={v}
                 onChange={e => handleOtpInput(e.target.value, i)}
                 onKeyDown={e => {
-                  if (e.key === 'Backspace' && !v && i > 0) {
-                    document.getElementById(`otp-${i - 1}`)?.focus()
-                  }
+                  if (e.key === 'Backspace' && !v && i > 0) document.getElementById(`otp-${i - 1}`)?.focus()
                 }}
                 maxLength={1}
                 style={{ width: 42, height: 48, textAlign: 'center', borderRadius: 10, border: '1px solid rgba(44,41,39,0.2)', background: 'rgba(255,255,255,0.4)', fontSize: '1.2rem', fontFamily: "'Caveat', cursive", color: '#2c2927', outline: 'none' }}
@@ -292,10 +313,18 @@ export default function RegisterPage() {
           {otpError && <p style={{ color: '#e05c5c', fontSize: '0.8rem', marginBottom: '0.75rem' }}>{otpError}</p>}
 
           <button onClick={handleOtp} disabled={loading} style={{ background: '#2c2927', color: '#f5f0eb', border: 'none', borderRadius: '999px', padding: '0.6rem 2rem', cursor: loading ? 'default' : 'pointer', fontFamily: "'Caveat', cursive", fontSize: '1.1rem', opacity: loading ? 0.6 : 1 }}>
-            {loading ? 'กำลังยืนยัน...' : 'Submit'}
+            {loading ? 'กำลังตรวจสอบ...' : 'Verify'}
           </button>
         </div>
       )}
     </main>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterInner />
+    </Suspense>
   )
 }

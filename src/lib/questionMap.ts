@@ -80,12 +80,12 @@ export const QUESTIONS: Question[] = [
   { id:'K33', dbColumn:'k_transportation',                onetKey:'k_transportation',                type:'knowledge', text:'ฉันมีความรู้ด้านการขนส่งและโลจิสติกส์' },
 
   // ── 3. ATTITUDE (A01–A06) = 6 ข้อ ─────────────────────────────────────────
-  { id:'A01', dbColumn:'a_artistic',      onetKey:'a_artistic',      type:'attitude', text:'... (ชอบสร้างเนื้อหาจากจินตนาการ คิดงานเชิงสร้างสรรค์)' },
-  { id:'A02', dbColumn:'a_conventional',  onetKey:'a_conventional',  type:'attitude', text:'... (ชอบทำงานที่มีขั้นตอนชัดเจน ละเอียด มีระเบียบ)' },
-  { id:'A03', dbColumn:'a_enterprising',  onetKey:'a_enterprising',  type:'attitude', text:'... (ชอบนำเสนอ โน้มน้าวผู้อื่น มีบทบาทนำในทีม)' },
-  { id:'A04', dbColumn:'a_investigative', onetKey:'a_investigative', type:'attitude', text:'... (ชอบค้นคว้าข้อมูล วิเคราะห์ปัญหา และทดลองหาคำตอบ)' },
-  { id:'A05', dbColumn:'a_realistic',     onetKey:'a_realistic',     type:'attitude', text:'... (ชอบทำงานที่เห็นผลชัดเจน ทำงานกับระบบโดยตรง)' },
-  { id:'A06', dbColumn:'a_social',        onetKey:'a_social',        type:'attitude', text:'... (ชอบทำงานกับผู้คน ช่วยเหลือผู้อื่น และทำงานเป็นทีม)' },
+  { id:'A01', dbColumn:'a_artistic',      onetKey:'a_artistic',      type:'attitude', text:'ชอบสร้างเนื้อหาจากจินตนาการ คิดงานเชิงสร้างสรรค์' },
+  { id:'A02', dbColumn:'a_conventional',  onetKey:'a_conventional',  type:'attitude', text:'ชอบทำงานที่มีขั้นตอนชัดเจน ละเอียด มีระเบียบ' },
+  { id:'A03', dbColumn:'a_enterprising',  onetKey:'a_enterprising',  type:'attitude', text:'ชอบนำเสนอ โน้มน้าวผู้อื่น มีบทบาทนำในทีม' },
+  { id:'A04', dbColumn:'a_investigative', onetKey:'a_investigative', type:'attitude', text:'ชอบค้นคว้าข้อมูล วิเคราะห์ปัญหา และทดลองหาคำตอบ' },
+  { id:'A05', dbColumn:'a_realistic',     onetKey:'a_realistic',     type:'attitude', text:'ชอบทำงานที่เห็นผลชัดเจน ทำงานกับระบบโดยตรง' },
+  { id:'A06', dbColumn:'a_social',        onetKey:'a_social',        type:'attitude', text:'ชอบทำงานกับผู้คน ช่วยเหลือผู้อื่น และทำงานเป็นทีม' },
 ]
 // แปลงคำตอบ slider (0-100) → format สำหรับคำนวณ
 // key คือ dbColumn เลย ไม่ต้องแปลงอีกรอบ

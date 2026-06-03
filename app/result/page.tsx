@@ -2,7 +2,14 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { createClient } from '@supabase/supabase-js'
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 type Career = {
   careerId: string
   name: string
@@ -30,6 +37,7 @@ type Theme = {
   btnGapColor: string
 }
 
+// ─── Themes ───────────────────────────────────────────────────────────────────
 const THEMES: Record<string, Theme> = {
   DT: {
     accent: '#4a6fc4',
@@ -67,12 +75,13 @@ const THEMES: Record<string, Theme> = {
   },
 }
 
+// ─── Career pic ───────────────────────────────────────────────────────────────
 const CAREER_PIC: Record<string, string> = {}
-
 function getCareerPic(careerId: string, sector: string): string {
   return CAREER_PIC[careerId] ?? (sector === 'DC' ? '/pic/DC.png' : '/pic/DT.png')
 }
 
+// ─── Skill label map ──────────────────────────────────────────────────────────
 const COL_LABEL: Record<string, string> = {
   s_active_learning: 'การเรียนรู้เชิงรุก',
   s_critical_thinking: 'การคิดวิเคราะห์',
@@ -172,7 +181,7 @@ const SECTOR_ICONS: Record<string, string[]> = {
   DC: ['🎨', '✏️', '💡'],
 }
 
-// ── Radar Chart ───────────────────────────────────────────────
+// ─── Radar Chart ──────────────────────────────────────────────────────────────
 function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Theme }) {
   const entries = Object.entries(gaps)
     .filter(([, v]) => v > 0)
@@ -186,7 +195,6 @@ function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Them
     </div>
   )
 
-  // ลด r ให้มีพื้นที่ label มากขึ้น
   const cx = 160, cy = 160, r = 75
   const step = (2 * Math.PI) / n
   const maxVal = Math.max(...entries.map(([, v]) => v), 1)
@@ -215,11 +223,9 @@ function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Them
         <circle key={i} cx={p.x} cy={p.y} r="3.5" fill={theme.radarStroke} />
       ))}
       {entries.map(([col, val], i) => {
-        // ดันตัวเลขและ label ออกไปไกลขึ้น
         const vp = pt(i, 1.22)
         const lp = pt(i, 1.48)
         const label = toLabel(col)
-        // ตัด label ที่ยาวเกิน 5 ตัวอักษรให้ขึ้นบรรทัดใหม่
         const words = label.length > 5
           ? [label.slice(0, Math.ceil(label.length / 2)), label.slice(Math.ceil(label.length / 2))]
           : [label]
@@ -231,9 +237,7 @@ function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Them
               {Math.round(val)}
             </text>
             {words.map((w, wi) => (
-              <text key={wi}
-                x={lp.x}
-                y={lp.y + wi * 11 - (words.length - 1) * 5.5}
+              <text key={wi} x={lp.x} y={lp.y + wi * 11 - (words.length - 1) * 5.5}
                 textAnchor="middle" dominantBaseline="middle"
                 fontSize="8.5" fill="#5a6480"
                 style={{ fontFamily: "'Noto Sans Thai', sans-serif" }}>
@@ -247,53 +251,189 @@ function RadarChart({ gaps, theme }: { gaps: Record<string, number>; theme: Them
   )
 }
 
-// ── Main ──────────────────────────────────────────────────────
+// ─── Unlock Banner (guest only) ───────────────────────────────────────────────
+function UnlockBanner({ theme, sector }: { theme: Theme; sector: string }) {
+  const router = useRouter()
+  return (
+    <div style={{ maxWidth: 980, margin: '1.25rem auto 0', padding: '0 1.25rem' }}>
+      <div style={{
+        background: theme.accentLight,
+        border: `1.5px dashed ${theme.accent}`,
+        borderRadius: '16px',
+        padding: '1rem 1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '1rem',
+        flexWrap: 'wrap',
+      }}>
+        <div>
+          <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e' }}>
+            🎯 อยากรู้ว่าต้องพัฒนาทักษะอะไรบ้าง?
+          </p>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#5a6480' }}>
+            สมัครสมาชิกเพื่อดู Skill Gap Map, คอร์สเรียน และตำแหน่งงานที่เหมาะกับคุณ
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => router.push(`/login?redirect=/skills?sector=${sector}`)}
+            style={{
+              background: 'white', color: theme.accentText,
+              border: `1.5px solid ${theme.accent}`,
+              borderRadius: '999px', whiteSpace: 'nowrap',
+              padding: '0.6rem 1.4rem', fontSize: '0.82rem',
+              cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
+            }}
+          >เข้าสู่ระบบ</button>
+          <button
+            onClick={() => router.push(`/register?redirect=/skills?sector=${sector}`)}
+            style={{
+              background: theme.btnGapBg, color: theme.btnGapColor,
+              border: 'none', borderRadius: '999px', whiteSpace: 'nowrap',
+              padding: '0.6rem 1.5rem', fontSize: '0.82rem',
+              cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
+              boxShadow: `0 4px 14px ${theme.accent}44`,
+            }}
+          >สมัครฟรี →</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Feature preview cards (guest only) ──────────────────────────────────────
+function LockedFeatures({ theme }: { theme: Theme }) {
+  const features = [
+    { icon: '🗺️', title: 'Skill Gap Map',      desc: 'เห็นภาพชัดว่าทักษะไหนขาด ควรพัฒนาตรงไหนก่อน' },
+    { icon: '📚', title: 'คอร์สเรียนแนะนำ',    desc: 'คอร์สที่เลือกมาเพื่อปิด gap ของคุณโดยเฉพาะ' },
+    { icon: '💼', title: 'ตำแหน่งงานรอคุณอยู่', desc: 'งานที่ match กับโปรไฟล์ของคุณในพื้นที่ใกล้บ้าน' },
+  ]
+  return (
+    <div style={{ maxWidth: 980, margin: '1rem auto 0', padding: '0 1.25rem' }}>
+      <p style={{
+        textAlign: 'center', fontSize: '0.75rem',
+        color: '#9aaccc', marginBottom: '0.75rem',
+        fontFamily: "'Noto Sans Thai', sans-serif",
+      }}>
+        สมาชิกจะได้รับสิทธิ์เพิ่มเติม
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.75rem' }}>
+        {features.map((f, i) => (
+          <div key={i} style={{
+            background: 'white',
+            borderRadius: '14px',
+            padding: '1rem',
+            textAlign: 'center',
+            border: `1px solid ${theme.accentMid}`,
+            position: 'relative',
+            overflow: 'hidden',
+            opacity: 0.75,
+          }}>
+            {/* blur overlay */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              backdropFilter: 'blur(1px)',
+              background: 'rgba(255,255,255,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{ fontSize: '1.2rem' }}>🔒</span>
+            </div>
+            <div style={{ fontSize: '1.5rem', marginBottom: '0.4rem' }}>{f.icon}</div>
+            <p style={{ margin: 0, fontWeight: 700, fontSize: '0.8rem', color: '#1a1a2e' }}>{f.title}</p>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.72rem', color: '#5a6480' }}>{f.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Main Result Content ──────────────────────────────────────────────────────
 function ResultContent() {
   const router = useRouter()
   const [recommendations, setRecommendations] = useState<Career[]>([])
   const [sector, setSector] = useState('DT')
   const [loading, setLoading] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
+    // 1) โหลด session result
     const raw = sessionStorage.getItem('caria_result')
     if (!raw) { router.replace('/'); return }
     try {
       const parsed = JSON.parse(raw)
       setSector(parsed.sector || 'DT')
       setRecommendations(parsed.recommendations || [])
-    } catch { router.replace('/') }
+    } catch {
+      router.replace('/')
+      return
+    }
     setLoading(false)
+
+    // 2) เช็ค Supabase auth
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data.session)
+      setAuthChecked(true)
+    })
+
+    // 3) ฟัง auth change (กรณี login popup)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session)
+      setAuthChecked(true)
+    })
+    return () => subscription.unsubscribe()
   }, [])
 
-  if (loading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f0eb' }}>
-      <p style={{ fontFamily: "'Noto Sans Thai', sans-serif", fontSize: '1.2rem', color: '#2c2927' }}>กำลังโหลด...</p>
+  // ── Loading ──
+  if (loading || !authChecked) return (
+    <div style={{
+      minHeight: '100vh', display: 'flex', alignItems: 'center',
+      justifyContent: 'center', background: '#f5f0eb',
+    }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          width: 36, height: 36, border: '3px solid #d0d5e8',
+          borderTopColor: '#4a6fc4', borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite', margin: '0 auto 1rem',
+        }} />
+        <p style={{ fontFamily: "'Noto Sans Thai', sans-serif", fontSize: '0.9rem', color: '#5a6480' }}>
+          กำลังโหลด...
+        </p>
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
 
+  // ── Empty ──
   if (recommendations.length === 0) return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f5f0eb', gap: '1rem' }}>
-      <p style={{ fontFamily: "'Noto Sans Thai', sans-serif", fontSize: '1.2rem', color: '#2c2927' }}>ไม่พบผลลัพธ์</p>
-      <button onClick={() => router.push('/')}
-        style={{ background: '#2c2927', color: '#f5f0eb', border: 'none', borderRadius: '999px', padding: '0.6rem 1.5rem', cursor: 'pointer' }}>
-        กลับหน้าแรก
-      </button>
+    <div style={{
+      minHeight: '100vh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: '#f5f0eb', gap: '1rem',
+    }}>
+      <p style={{ fontFamily: "'Noto Sans Thai', sans-serif", fontSize: '1.1rem', color: '#2c2927' }}>
+        ไม่พบผลลัพธ์
+      </p>
+      <button
+        onClick={() => router.push('/')}
+        style={{
+          background: '#2c2927', color: '#f5f0eb', border: 'none',
+          borderRadius: '999px', padding: '0.6rem 1.5rem',
+          cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif",
+        }}
+      >กลับหน้าแรก</button>
     </div>
   )
 
   const theme = THEMES[sector] ?? THEMES.DT
   const icons = SECTOR_ICONS[sector] ?? SECTOR_ICONS.DT
-
   const top1 = recommendations[0]
   const top2and3 = recommendations.slice(1, 3)
   const picSrc = getCareerPic(top1.careerId, sector)
   const radarGaps = top1.allGaps ?? top1.topGaps
 
-  // normalize % เทียบกับ top1 เป็น 100%
-  const maxMes = Math.max(...recommendations.map(r => r.mesScore), 0.001)
-  const normalizedPct = (score: number) => Math.round((score / maxMes) * 100)
-
-  // จุดเด่น: gap น้อยสุด = ทักษะที่ผู้ใช้ใกล้เคียงอาชีพมากที่สุด
   const strengths = Object.entries(top1.allGaps ?? top1.topGaps)
     .sort((a, b) => a[1] - b[1])
     .slice(0, 5)
@@ -309,7 +449,10 @@ function ResultContent() {
 
       {/* ── Header ── */}
       <div style={{ textAlign: 'center', padding: '2rem 1rem 1.25rem' }}>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1a1a2e', margin: 0, lineHeight: 1.4 }}>
+        <h1 style={{
+          fontSize: '1.6rem', fontWeight: 700,
+          color: '#1a1a2e', margin: 0, lineHeight: 1.4,
+        }}>
           <span style={{ color: theme.headerAccent }}>ยินดีด้วย</span>{' '}
           นี่คือเส้นทางที่ออกแบบมาเพื่อคุณ
         </h1>
@@ -324,83 +467,69 @@ function ResultContent() {
           boxShadow: '0 4px 32px rgba(0,0,0,0.07)',
           overflow: 'hidden',
           display: 'grid',
-          gridTemplateColumns: '1fr 1.4fr',  // สมดุลขึ้น
+          gridTemplateColumns: '1fr 1.4fr',
           marginBottom: '1.5rem',
         }}>
 
-    {/* ── LEFT ── */}
-<div style={{
-  background: theme.cardBg,
-  padding: '1.75rem 1.5rem 1.75rem',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1.25rem',
-  alignItems: 'stretch',
-  justifyContent: 'flex-start',  // ← ทุกอย่างเริ่มจากบน
-}}>
+          {/* LEFT */}
+          <div style={{
+            background: theme.cardBg,
+            padding: '1.75rem 1.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+            alignItems: 'stretch',
+            justifyContent: 'flex-start',
+          }}>
+            {/* Career image */}
+            <div style={{
+              width: '100%', borderRadius: '18px', overflow: 'hidden',
+              aspectRatio: '1/1', boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              background: theme.accentMid, position: 'relative', flexShrink: 0,
+            }}>
+              <Image src={picSrc} alt={top1.name} fill style={{ objectFit: 'cover' }} priority />
+            </div>
 
-  {/* รูปจดหมาย — ขยายใหญ่ขึ้น */}
-  <div style={{
-    width: '100%',
-    borderRadius: '18px',
-    overflow: 'hidden',
-    aspectRatio: '1/1',        // เปลี่ยนจาก 4/3 → 1/1 ให้สูงขึ้น
-    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-    background: theme.accentMid,
-    position: 'relative',
-    flexShrink: 0,
-  }}>
-    <Image
-      src={picSrc}
-      alt={top1.name}
-      fill
-      style={{ objectFit: 'cover' }}
-      priority
-    />
-  </div>
+            {/* Strengths */}
+            <div style={{
+              background: 'white', borderRadius: '16px',
+              padding: '1rem 1.1rem',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+              alignSelf: 'flex-start',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: '0.75rem' }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: '50%',
+                  background: theme.checkBg,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <svg width="12" height="10" viewBox="0 0 12 10">
+                    <polyline points="1,5 4.5,8.5 11,1" fill="none" stroke="white"
+                      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <span style={{ fontWeight: 700, fontSize: '0.82rem', color: '#2d3a5c' }}>จุดเด่นของตัวคุณ</span>
+              </div>
+              {strengths.map((s, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 7 }}>
+                  <div style={{
+                    width: 17, height: 17, borderRadius: '50%', background: theme.checkBg,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, marginTop: 1,
+                  }}>
+                    <svg width="9" height="7" viewBox="0 0 9 7">
+                      <polyline points="1,3.5 3.5,6 8,1" fill="none" stroke="white"
+                        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: '#4a5568', lineHeight: 1.55 }}>{s}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-  {/* จุดเด่น — อยู่ล่างสุด ใช้ marginTop: auto ดันลงไป */}
-  <div style={{
-  background: 'white',
-  borderRadius: '16px',
-  padding: '1rem 1.1rem',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
-  marginTop: '0',
-  alignSelf: 'flex-start',  // ← ไม่ยืดตาม column
-}}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: '0.75rem' }}>
-      <div style={{
-        width: 24, height: 24, borderRadius: '50%',
-        background: theme.checkBg,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-      }}>
-        <svg width="12" height="10" viewBox="0 0 12 10">
-          <polyline points="1,5 4.5,8.5 11,1" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-      <span style={{ fontWeight: 700, fontSize: '0.82rem', color: '#2d3a5c' }}>จุดเด่นของตัวคุณ</span>
-    </div>
-    {strengths.map((s, i) => (
-      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 7 }}>
-        <div style={{
-          width: 17, height: 17, borderRadius: '50%',
-          background: theme.checkBg,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0, marginTop: 1,
-        }}>
-          <svg width="9" height="7" viewBox="0 0 9 7">
-            <polyline points="1,3.5 3.5,6 8,1" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        <span style={{ fontSize: '0.78rem', color: '#4a5568', lineHeight: 1.55 }}>{s}</span>
-      </div>
-    ))}
-  </div>
-</div>
-
-          {/* ── RIGHT ── */}
+          {/* RIGHT */}
           <div style={{ padding: '2rem 2rem 1.75rem' }}>
-
             <div style={{
               display: 'inline-block',
               background: theme.badgeBg, color: theme.badgeText,
@@ -412,44 +541,40 @@ function ResultContent() {
             </div>
 
             <h2 style={{
-              fontSize: '2.4rem', fontWeight: 800,
-              color: '#1a1a2e', margin: '0 0 0.3rem',
-              lineHeight: 1.15, letterSpacing: '-0.5px',
+              fontSize: '2.4rem', fontWeight: 800, color: '#1a1a2e',
+              margin: '0 0 0.3rem', lineHeight: 1.15, letterSpacing: '-0.5px',
             }}>
               {top1.name}
             </h2>
 
-   
-
-            {/* Top2 & Top3 */}
+            {/* Top 2 & 3 */}
             {top2and3.length > 0 && (
               <div style={{
-                background: theme.sectionBg,
-                borderRadius: '16px',
-                padding: '1rem 1.25rem',
-                marginBottom: '1.1rem',
+                background: theme.sectionBg, borderRadius: '16px',
+                padding: '1rem 1.25rem', marginBottom: '1.1rem',
               }}>
                 <p style={{ fontSize: '0.72rem', color: '#9aaccc', fontWeight: 600, marginBottom: '0.8rem' }}>
                   อาชีพแนะนำ
                 </p>
                 <div style={{ display: 'flex', gap: '1.5rem' }}>
                   {top2and3.map((c, i) => (
-                    <div key={c.careerId} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                    <div key={c.careerId} style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+                    }}>
                       <div style={{
-                        width: 54, height: 54,
-                        background: 'white',
-                        borderRadius: '14px',
+                        width: 54, height: 54, background: 'white', borderRadius: '14px',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '1.5rem',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                        fontSize: '1.5rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
                         border: `1.5px solid ${theme.accentMid}`,
                       }}>
                         {icons[i] ?? '🎯'}
                       </div>
-                      <span style={{ fontSize: '0.7rem', color: '#4a5568', textAlign: 'center', maxWidth: 80, lineHeight: 1.4 }}>
+                      <span style={{
+                        fontSize: '0.7rem', color: '#4a5568',
+                        textAlign: 'center', maxWidth: 80, lineHeight: 1.4,
+                      }}>
                         {c.name}
                       </span>
-                     
                     </div>
                   ))}
                 </div>
@@ -458,11 +583,13 @@ function ResultContent() {
 
             {/* Radar */}
             <div style={{
-              background: theme.sectionBg,
-              borderRadius: '16px',
+              background: theme.sectionBg, borderRadius: '16px',
               padding: '0.9rem 0.5rem 0.5rem',
             }}>
-              <p style={{ fontSize: '0.72rem', fontWeight: 700, color: '#2d3a5c', textAlign: 'center', marginBottom: '0.1rem' }}>
+              <p style={{
+                fontSize: '0.72rem', fontWeight: 700, color: '#2d3a5c',
+                textAlign: 'center', marginBottom: '0.1rem',
+              }}>
                 กราฟแสดงศักยภาพของคุณ
               </p>
               <p style={{ fontSize: '0.68rem', color: '#9aaccc', textAlign: 'center', marginBottom: '0.4rem' }}>
@@ -474,8 +601,9 @@ function ResultContent() {
           </div>
         </div>
 
-        {/* ── Buttons ── */}
+        {/* ── Action Buttons ── */}
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          {/* ปุ่มกลับ — ทุกคนเห็น */}
           <button
             onClick={() => { sessionStorage.removeItem('caria_result'); router.push('/') }}
             style={{
@@ -485,23 +613,50 @@ function ResultContent() {
               cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 500,
             }}
           >← กลับไปหน้า HOME</button>
-          <button
-            onClick={() => router.push('/skills?sector=' + sector)}
-            style={{
-              background: theme.btnGapBg, color: theme.btnGapColor,
-              border: 'none', borderRadius: '999px',
-              padding: '0.75rem 2.25rem', fontSize: '0.86rem',
-              cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
-              boxShadow: `0 4px 14px ${theme.accent}44`,
-            }}
-          >ดูทักษะที่ขาดเติมเต็ม →</button>
-        </div>
 
+          {/* ถ้า login แล้ว → ปุ่มไป Skills */}
+          {isLoggedIn && (
+            <button
+              onClick={() => router.push(`/skills?sector=${sector}`)}
+              style={{
+                background: theme.btnGapBg, color: theme.btnGapColor,
+                border: 'none', borderRadius: '999px',
+                padding: '0.75rem 2.25rem', fontSize: '0.86rem',
+                cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
+                boxShadow: `0 4px 14px ${theme.accent}44`,
+              }}
+            >ดูทักษะที่ขาดเติมเต็ม →</button>
+          )}
+
+          {/* ถ้ายัง guest → ปุ่มชวน login */}
+          {!isLoggedIn && (
+            <button
+              onClick={() => router.push(`/login?redirect=/skills?sector=${sector}`)}
+              style={{
+                background: 'white', color: theme.accentText,
+                border: `1.5px solid ${theme.accent}`, borderRadius: '999px',
+                padding: '0.75rem 2.25rem', fontSize: '0.86rem',
+                cursor: 'pointer', fontFamily: "'Noto Sans Thai', sans-serif", fontWeight: 600,
+              }}
+            >🔓 เข้าสู่ระบบเพื่อดูทักษะที่ขาด</button>
+          )}
+        </div>
       </div>
+
+      {/* ── Guest-only extras ── */}
+      {!isLoggedIn && (
+        <>
+          <LockedFeatures theme={theme} />
+          <UnlockBanner theme={theme} sector={sector} />
+        </>
+      )}
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </main>
   )
 }
 
+// ─── Export ───────────────────────────────────────────────────────────────────
 export default function ResultPage() {
   return <Suspense><ResultContent /></Suspense>
 }
